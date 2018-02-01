@@ -9,7 +9,7 @@ sudo apt install xzdec
 sudo tlmgr init-usertree
 
 # used packages
-tlmgr install nag upquote units siunitx enumitem tocloft forest pgf pgfopts etoolbox elocalloc environ inlinedef trimspaces 
+tlmgr install nag upquote units siunitx enumitem tocloft forest pgf pgfopts etoolbox elocalloc environ inlinedef trimspaces algorithmicx
 ```
 
 Then you can do `pdflatex master.tex` and you're good to go!
