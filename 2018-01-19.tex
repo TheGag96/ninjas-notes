@@ -1,0 +1,78 @@
+\section{2018-01-19}
+
+
+\subsection{Make and makefiles}
+
+\shellcmd{make} is a Unix command. It's part of a utility that's designed to lead to easier building of programs the goal is to simplify the process. Many times, the creation of an executable is a very quick, simple, easy (cheesy) compile command. With just a few files, that suffices. But, many times, projects are comprised  of more than just a few files. Also, you may change just one file, there's no need to rebuild allt he files in the project -- only the file(s) that have been changed or are depndencies of those files. \shellcmd{make} has the ability to accomplish this. It uses the time stamps and it knows the dependencies.
+
+\subsubsection{The basics}
+
+\begin{itemize}
+  \item "makefile" or "Makefile" - a file you create that is executed by the command \shellcmd{make}
+  \item \shellcmd{make} - the command
+  \item target - the executable that is to be built
+  \item dependencies - the files used to build the target
+\end{itemize}
+
+Motivation is to expedite the build to save time.
+
+\subsubsection{Basic example makefile}
+
+\begin{lstlisting}[language=make]
+# This is the makefile for the stooge project.
+stooge : moe.o larry.o curly.o shemp.h 
+  g++ moe.o larry.o curly.o -o stooge
+
+moe.o : moe.cpp larry.cpp shemp.h curly.cpp 
+  g++ -c moe.cpp curly.cpp larry.cpp -o moe.o 
+
+curly.o : curly.cpp shemp.h
+  g++ -c curly.cpp -o curly.o
+
+larry.o : larry.cpp shemp.h
+  g++ -c larry.cpp -o larry.o
+\end{lstlisting}
+
+\textit{Note, requires tabs for indentation}
+
+\subsubsection{A more robust one}
+
+\begin{lstlisting}[language=make]
+# makefile for stooge
+cxx = /mst/bin/g++
+FLAGS = -W -Wall -s -pediantic -errors
+OBJECTS = moe.o \
+          larry.o \
+          curly.o
+.SUFFIXES : .cpp
+.cpp .o : $<
+  ${cxx} -c ${FLAGS} $< -o $@
+default : all
+all : stooge
+stooge : ${OBJECTS}
+  ${cxx} ${FLAGS} ${OBJECTS} -o $@
+clean : 
+  -@rm -f core > /dev/null 2>&1
+  -@rm -f stooge > /dev/null 2>&1
+\end{lstlisting}
+
+\subsubsection{Basic rules}
+
+\begin{enumerate}
+  \item There must be a tab at the lead or beginning of a command line. You can use the Unix command:
+
+  \begin{lstlisting}[language=make]
+  cat -v -t -e makefile
+  \end{lstlisting}
+
+  Will print a \shellcmd{\^I} anywhere there is a tab char, and a \shellcmd{\$} at the end of every line.
+
+  "When using Makefiles, you must use tabs to indent. In jpico, when you press tab, it puts something that \textit{looks} like a tab. But it's not a tab. It took me about 3 or 4 hours to figure it out. jpico is named after a guy named Joe. I looked him up, and he died several years earlier, but I dug him up and killed him again." --Captain Price, 2018
+
+  \item \shellcmd{\textbackslash} at the end of a line continues that line on the next line of the file (no space between the \shellcmd{\textbackslash} and the newline char)
+  \item Don't use tabs anywhere else.
+  \item \shellcmd{make} ignores blank lines. \shellcmd{\#} begins a comment. 
+  \item Targets without dependencies are allowed.
+  \item Command lines are echoed to the standard out
+  \item \shellcmd{-@} will suppress that echo.
+\end{enumerate}

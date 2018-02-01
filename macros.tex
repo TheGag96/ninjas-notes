@@ -20,6 +20,14 @@
 }
 \usepackage[linguistics]{forest}
 
+% \setlength{\parindent}{0pt}
+\usepackage{parskip}
+
+\usepackage{fontspec}
+\setmonofont[
+  Contextuals={Alternate}
+]{Fira Code}
+
 \lstset{%
     language=Python,
     basicstyle=\footnotesize\ttfamily,
@@ -37,8 +45,8 @@
     xleftmargin=17pt,
     framexleftmargin=17pt,
     framexrightmargin=5pt,
-    framexbottommargin=4pt,
-    mathescape
+    framexbottommargin=4pt
+    % mathescape
 }
 
 \let\emptyset\varnothing%

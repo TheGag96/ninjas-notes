@@ -1,0 +1,181 @@
+\section{2018-01-31}
+
+\subsection{More templates}
+
+\subsubsection{Some stuff}
+
+\begin{lstlisting}[language=C++]
+template <typename T>
+void swap(T& t1, T& t2) {
+  T temp = t1;
+  t1 = t2;
+  t2 = temp;
+  return;
+}
+
+template <class T>
+int find(const T arr[], const int size, const T& target) {
+  bool found = false;
+  int i      = 0;
+  while (!found && i < size) {
+    if (arr[i] == target) found = true;
+    else i++;
+
+    return found ? i : -1;
+  }
+}
+\end{lstlisting}
+
+
+\subsubsection{Extern templates}
+
+\textbf{header.h}
+
+\begin{lstlisting}[language=C++]
+template <typename T>
+void BIGFUNC() {
+  //...
+}
+\end{lstlisting}
+
+\textbf{source1.cpp}
+
+\begin{lstlisting}[language=C++]
+void func1() {
+  BIGFUNC<int>();  
+  //...
+}
+\end{lstlisting}
+
+\textbf{source2.cpp}
+
+\begin{lstlisting}[language=C++]
+void func2() {
+  BIGFUNC<int>();  
+  //...
+}
+\end{lstlisting}
+
+The result of this is that the compiler creates two copies of BIG with the template insiantiated with int in two .o files. It has to discard one. To prevent this:
+
+in source2.cpp
+
+\begin{lstlisting}[language=C++]
+#include "header.h"
+extern template BIgFUNC<int>();
+void func2() {
+  //...
+}
+\end{lstlisting}
+
+
+\subsection{Making life easier with auto and decltype}
+
+\subsection{auto}
+
+\shellcmd{auto} - allows your code to deduce type when allocating memory; it's a signal to the compiler to infer a type based on the value of the right-hand side
+
+\begin{lstlisting}[language=C++]
+float x = 1.2;
+auto  y = 5.6;
+auto  z = x;
+\end{lstlisting}
+
+But this isn't really useful and not what auto is good for. If there is no initial value, it won't work. \shellcmd{auto} is most useful for using with templates and iterators.
+
+\begin{lstlisting}[language=C++]
+//ex 1
+vector<int> vec;
+auto itr = vec.iterator(); //instead of vector<int>::iterator itr = ...
+
+//ex 2
+template <class BuiltType, class Builder>
+void buildSomething(Builder& builder) {
+  BuiltType obj = builder.makeObj();
+  //...
+}
+\end{lstlisting}
+
+Not only do wehave two template parameters, but the tye of the built object can't be inferred by the parameter.
+
+\begin{lstlisting}[language=C++]
+MyObjBuilder builder
+buildSomething<AnObj>(builder);
+\end{lstlisting}
+
+But this can be simplified using \shellcmd{auto}. Let C++ determine teh type of the built object.
+
+\begin{lstlisting}[language=C++]
+template <class Builder>
+void makeSomeThing(Builder& builder) {
+  auto val = builder.makeObj();
+  //...
+}
+\end{lstlisting}
+
+So, you only need one template parameter and the type is going to be inferred by C++.
+
+\begin{lstlisting}[language=C++]
+MyObjBuilder builder;
+makeSomething(builder);
+\end{lstlisting}
+
+
+\subsection{decltype}
+
+Let's suppose in the example above that you want to return the object built by the function. Will auto help? (yes... no, yes)
+
+There is a new return type syntax:
+
+\begin{lstlisting}[language=C++]
+int add(int x, int y);
+auto add(int x, int y) -> int;
+\end{lstlisting}
+
+This example is far too simple. Try this:
+
+\begin{lstlisting}[language=C++]
+class Student {
+  private:
+    age m_age;
+  public: 
+    enum age {OLD, YOUNG};
+    age getAge();  
+}
+\end{lstlisting}
+
+The implementation of the get function is the problem:
+
+\begin{lstlisting}[language=C++]
+student::age student::getAge() {
+  return m_age;
+}
+\end{lstlisting}
+
+
+With \shellcmd{auto} we have:
+
+\begin{lstlisting}[language=C++]
+auto student::getAge() {
+  return m_age;
+}
+\end{lstlisting}
+
+How does this help with this next example? We need something new. While \shellcmd{auto} allows the declaration of an object of a particular type, \shellcmd{decltype} allows you to extract a type:
+
+\begin{lstlisting}[language=C++]
+int x = 3;
+decltype(x) y = x;
+\end{lstlisting}
+
+So, let's apply this to the example:
+
+\begin{lstlisting}[language=C++]
+template <class Builder>
+auto makeSomeThing(Builder& builder) -> decltype(builder.makeObj()) {
+  auto val = builder.makeObj();
+  //...
+  return val;
+}
+\end{lstlisting}
+

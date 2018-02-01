@@ -1,0 +1,84 @@
+\section{2018-01-24}
+
+\subsection{Modeling}
+
+So why do we model?
+
+A model is a simplificaiton of a reality...
+
+\begin{itemize}
+  \item to be able to visualize the entirety of teh system
+  \begin{itemize}
+    \item to consider the architecture
+    \item to see what the system is capable of 
+    \item to save on cost
+    \item to see where the real system is going
+  \end{itemize}
+  \item to manage risk
+  \item to document the system ("blueprints")
+  \item to provide insight into unseen problems
+  \item to provide different "views" of the system
+\end{itemize}
+
+"Divide and Conquer" allows you to break a BIG project dinto smaller problems to solve. The goal of modeling OOP is reusability, maintainability, modifiability, adaptability, extendability
+
+\subsection{UML - Unified Modeling Language}
+
+Basics:
+
+\begin{itemize}
+  \item things (things)
+  \item relationships (how things relate)
+  \item diagrams (groups-o-things)
+\end{itemize}
+
+Things:
+
+\begin{enumerate}
+  \item Structural (rows in UML) - static parts of the model both physical and/or conceptual (e.g. desk or matrix)
+  \begin{itemize}
+    \item a class - a set of shared attributes and operations 
+    \item an interface
+    \item a collaboration
+  \end{itemize}
+  \item Behaiorial (verbs of UML) - describe behavior over time
+  \begin{itemize}
+    \item iteraction -
+    \item state machine
+  \end{itemize}
+  \item Annotiational (the explaining part of UML)
+  \begin{itemize}
+    \item a note - comment
+    \item a constraint-
+  \end{itemize}
+\end{enumerate}
+
+Relationships:
+
+\begin{enumerate}
+  \item Dependencies
+  \item Associations
+  \item Generalizations
+\end{enumerate}
+
+diagrams - any combination of structural things and relationships
+
+---------
+| name of the class
+|---------
+| attributes
+|---------
+|operations
+---------
+
+\begin{enumerate}
+  \item dependency ("uses a"):  - - - - ->
+  \item association ("contains a"):  --------->
+  \item generalization ("inherits from", "is a"): ---------|> 
+\end{enumerate}
+
+% attributes: [vis] name [multiplicity] [:type]
+%   vis: + - #
+% functions: [vis] name [parameter list] [:return type]
+%   param list: [dir] name [:const] [:type]
+%     dir: in out inout

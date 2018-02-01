@@ -1,0 +1,81 @@
+\section{2018-01-29}
+
+\subsection{The Array Class}
+
+\begin{enumerate}
+  \item runtime sizing - using the constructs
+  \item use of the `[]` operator for indexing into the array
+  \item automatic memory management
+  \item array copying facility
+  \item being able to assign a single value to ever element of the array
+  \item resizing of my array
+\end{enumerate}
+
+\subsubsection{array.h}
+
+\begin{lstlisting}[language=C++]
+template <typename T>
+class Array {
+  public:
+    Array(const int size);
+    Array();
+    Array(const Array& source);
+    ~Array();
+    T& operator[](const int i);
+    int getSize() const;
+    Array& operator=(const Array& source);
+    Array& operator=(const T s);
+    void setSize(const int size);
+
+  private:
+    int m_size;
+    T* ptr_to_data;
+    void arraycopy(const Array& source);
+}
+\end{lstlisting}
+
+\subsubsection{array.cpp}
+
+\begin{lstlisting}[language=C++]
+Array::Array(const int size) {
+  m_size = size;
+  ptr_to_data = new T[size];
+}
+
+Array::Array(const Array& source) {
+  m_size = source.m_size;
+  ptr_to_data = new T[m_size];
+  arraycopy(source);
+}
+
+void Array::arraycopy(const Array& source) {
+  T* p = ptr_to_data + m_size;
+  T* q = source.ptr_to_data + m_size;
+  while (p > ptr_to_data)
+    *--p = *--q;
+  return;
+}
+
+Array::~Array() { delete[] ptr_to_data; }
+
+float& Array::operator[](const int i) {
+  return ptr_to_data[i];
+}
+
+Array& Array::operator=(const Array& s) {
+  if (ptr_to_data != s.ptr_to_data) {
+    setSize(s.m_size);
+    arraycopy(s);
+  }
+
+  return *this;
+}
+
+void Array::setSize(const int size) {
+  if (size != m_size) {
+    delete[] ptr_to_data;
+    m_size = size;
+    ptr_to_data = new float[size];
+  }
+}
+\end{lstlisting}
