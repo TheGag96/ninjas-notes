@@ -12,16 +12,18 @@
 
 \usepackage{hyperref}
 \hypersetup{
-    colorlinks,
-    citecolor=black,
-    filecolor=black,
-    linkcolor=black,
-    urlcolor=black
+  colorlinks,
+  citecolor=black,
+  filecolor=black,
+  linkcolor=black,
+  urlcolor=black
 }
 \usepackage[linguistics]{forest}
 
 % \setlength{\parindent}{0pt}
 \usepackage{parskip}
+
+% \special{pdf:outline}
 
 \usepackage{fontspec}
 \setmonofont[
@@ -29,24 +31,24 @@
 ]{Fira Code}
 
 \lstset{%
-    language=Python,
-    basicstyle=\footnotesize\ttfamily,
-    keywordstyle=\color{blue}\ttfamily,
-    stringstyle=\color{red}\ttfamily,
-    commentstyle=\color{gray}\ttfamily,
-    morecomment=[l][\color{magenta}]{\#},
-    numbers=left,
-    keepspaces=true,
-    tabsize=4,
-    breaklines=true,
-    morekeywords={True, False},
-    showspaces=false,
-    showtabs=false,
-    xleftmargin=17pt,
-    framexleftmargin=17pt,
-    framexrightmargin=5pt,
-    framexbottommargin=4pt
-    % mathescape
+  language=Python,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{blue}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  commentstyle=\color{gray}\ttfamily,
+  morecomment=[l][\color{magenta}]{\#},
+  numbers=left,
+  keepspaces=true,
+  tabsize=4,
+  breaklines=true,
+  morekeywords={True, False},
+  showspaces=false,
+  showtabs=false,
+  xleftmargin=17pt,
+  framexleftmargin=17pt,
+  framexrightmargin=5pt,
+  framexbottommargin=4pt,
+  % mathescape
 }
 
 \let\emptyset\varnothing%
@@ -58,5 +60,6 @@
 \newcommand{\bigTheta}[1]{\Theta\left(#1\right)}
 \newcommand{\bigOmega}[1]{\Omega\left(#1\right)}
 
-\newcommand{\shellcmd}[1]{\texttt{\colorbox{gray!30}{\strut#1}}}
+\newcommand{\shellcmd}[1]{\texttt{\colorbox{gray!25}{#1}}}
 \newcommand{\todo}[1]{\textbf{\colorbox{red!50}{\strut#1}}}
+\newcommand{\cpp}[1]{\lstinline$#1$}

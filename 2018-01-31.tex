@@ -16,7 +16,8 @@ void swap(T& t1, T& t2) {
 template <class T>
 int find(const T arr[], const int size, const T& target) {
   bool found = false;
-  int i      = 0;
+  int  i     = 0;
+  
   while (!found && i < size) {
     if (arr[i] == target) found = true;
     else i++;
@@ -71,9 +72,9 @@ void func2() {
 
 \subsection{Making life easier with auto and decltype}
 
-\subsection{auto}
+\subsubsection{auto}
 
-\shellcmd{auto} - allows your code to deduce type when allocating memory; it's a signal to the compiler to infer a type based on the value of the right-hand side
+\cpp{auto} - allows your code to deduce type when allocating memory; it's a signal to the compiler to infer a type based on the value of the right-hand side
 
 \begin{lstlisting}[language=C++]
 float x = 1.2;
@@ -81,7 +82,7 @@ auto  y = 5.6;
 auto  z = x;
 \end{lstlisting}
 
-But this isn't really useful and not what auto is good for. If there is no initial value, it won't work. \shellcmd{auto} is most useful for using with templates and iterators.
+But this isn't really useful and not what auto is good for. If there is no initial value, it won't work. \cpp{auto} is most useful for using with templates and iterators.
 
 \begin{lstlisting}[language=C++]
 //ex 1
@@ -103,7 +104,7 @@ MyObjBuilder builder
 buildSomething<AnObj>(builder);
 \end{lstlisting}
 
-But this can be simplified using \shellcmd{auto}. Let C++ determine teh type of the built object.
+But this can be simplified using \cpp{auto}. Let C++ determine teh type of the built object.
 
 \begin{lstlisting}[language=C++]
 template <class Builder>
@@ -121,7 +122,7 @@ makeSomething(builder);
 \end{lstlisting}
 
 
-\subsection{decltype}
+\subsubsection{decltype}
 
 Let's suppose in the example above that you want to return the object built by the function. Will auto help? (yes... no, yes)
 
@@ -153,7 +154,7 @@ student::age student::getAge() {
 \end{lstlisting}
 
 
-With \shellcmd{auto} we have:
+With \cpp{auto} we have:
 
 \begin{lstlisting}[language=C++]
 auto student::getAge() {
@@ -161,7 +162,7 @@ auto student::getAge() {
 }
 \end{lstlisting}
 
-How does this help with this next example? We need something new. While \shellcmd{auto} allows the declaration of an object of a particular type, \shellcmd{decltype} allows you to extract a type:
+How does this help with this next example? We need something new. While \cpp{auto} allows the declaration of an object of a particular type, \cpp{decltype} allows you to extract a type:
 
 \begin{lstlisting}[language=C++]
 int x = 3;

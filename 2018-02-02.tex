@@ -1,0 +1,85 @@
+\section{2018-02-02}
+
+\subsection{Continuing review}
+
+\subsubsection{Exception handling}
+
+What happens when an object is thrown? Well, two things are thrown:
+
+\begin{itemize}
+  \item an object
+  \item control
+\end{itemize}
+
+An example on how to properly make and use exceptions:
+
+\begin{lstlisting}[language=C++]
+class RangeErr {
+  public:
+    RangeErr(int i);
+    int BadSubscript();
+  private:
+    int subscr; 
+};
+
+class SizeErr {
+  public:
+    SizeErr(int i);
+    int BadSubscript();
+  private:
+    int subscr; 
+};
+\end{lstlisting}
+
+We would want to modify 3 facts int he Array class. First:
+
+\begin{lstlisting}[language=C++]
+template <class T>
+Array<T>::Array(int n) {
+  if (n < 0) throw SizeErr(n);
+  m_size  = n;
+  ptr_to_data = new T[n];
+}
+
+template <class T>
+T& Array<T>::operator[](int i) {
+  if (i < 0 || i >= m_size) throw RangeErr(i);
+  return ptr_to_data[i];
+}
+
+template <class T>
+void Array<T>::setSize(int n) {
+  if (n != m_size) {
+    if (n < 0) throw SizeErr(n);
+    //...
+  }
+}
+\end{lstlisting}
+
+Later...
+
+\begin{lstlisting}[language=C++]
+try {
+  int n;
+  cin >> n;
+  Array<float> array(n);
+  //...
+  int j;
+  cin >> j;
+  float f = array[j];
+  //...
+}
+catch (RangeErr e) {
+  cerr << "Subscript out of range: " << e.BadSubscript();
+}
+catch (SizeErr e) {
+  cerr << "Size of declared array is negative: " << e.BadSubscript();
+}
+\end{lstlisting}
+
+\subsection{Math stuff}
+
+\subsubsection{Functions}
+
+\begin{equation*}
+\end{equation*}

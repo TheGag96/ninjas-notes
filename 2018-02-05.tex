@@ -1,0 +1,138 @@
+\section{2018-02-05}
+
+\subsection{More stuff}
+
+\subsubsection{Reference returns}
+
+\begin{lstlisting}[language=C++]
+int index_of_min(const Array<float>& a) {
+  //...
+  return index_of_min_elem;
+}
+
+float& min_element(Array<float>& a) {
+  return a[index_of_min];
+}
+\end{lstlisting}
+
+This return by reference, though legal andpreferred in some cases, can lead to heartbreak. This is because that reference creates a ``backdoor'' into the class.
+
+\begin{lstlisting}[language=C++]
+Array<float> a(10);
+//...
+min_element(a) = 0; //changing the min. elem
+\end{lstlisting}
+
+Consider not returning a reference. When you returna non-reference value, you're actually returning a copy - hence, a constant. Alternatively, write a second version of the function that has a const parameter and a const reference return.
+
+Also: Be careful NOT to return a reference to a local object/value.
+
+
+\subsubsection{Function overloading vs./and templates}
+
+You overload a function when you want to have multiple functions with the same name but different parameter lists and so different functionalities for different types.
+
+\begin{enumerate}
+  \item Overloading functions and how C++ resolves functions calls.
+There are levels of consideration that C++ will go through to know how to resolve a function call.
+  \begin{enumerate}
+    \item Consider an exact match with only the possibility of trivial conversions (e.g. \cpp{T[]} to/from \cpp{T*}, \cpp{T} and \cpp{T\&})
+
+    This implies that \cpp{void f(T\&);} and \cpp{void f(T);} \underline{cannot} co-exist in the same program.
+    
+    Note: \cpp{void f(const T);} and \cpp{void f(T);} \underline{can} co-exist.
+
+    \item Match w/ promotions
+
+    char, enum, short <-> int, long; float <-> double (e.g. \cpp{void bob(float);} and \cpp{void bob(int);} can co-exist)
+
+    \item Standard conversions: int-types to float-types
+
+    \item User-defined conversions. Be careful that your code only defines one way to convert from one type to another. (e.g. \cpp{void bob(int, float);} and \cpp{void bob(int, double);})
+
+    What does \cpp{bob(1, 2);}? C++ will flag an error - ambigious funtion call
+
+    \textbf{If you need to search the rules for function call resolution you need to rewrite your code.}
+  \end{enumerate}
+
+  \item Templates
+
+  Suppose we have:
+
+\begin{lstlisting}[language=C++]
+template <class T>
+void bob(T a, const T& b);
+\end{lstlisting}
+
+  Member of the class include
+  
+\begin{lstlisting}[language=C++]
+void bob(int a, const int& b);
+void bob(char a, const char& b);
+\end{lstlisting}
+
+\end{enumerate}
+
+Now the steps c++ goes through to resolve function calls:
+
+\begin{enumerate}
+  \item Match without the possibility of any conversion.
+  \item Template match with possibility of trivial conversion.
+  \item Function declaration using ordinary matching processes.
+\end{enumerate}
+
+Example:
+
+\begin{lstlisting}[language=C++]
+template <class T>
+void bob(T a, const T& b);
+
+int a;
+int b;
+
+bob(1,   a); //matches the template w/ T=int
+bob(1.0, b); //matches the template w/ T=float
+bob(1,   b); //no match
+\end{lstlisting}
+
+Now add in:
+
+\begin{lstlisting}[language=C++]
+void bob(float a, const float& b);
+\end{lstlisting}
+
+Now, \cpp{bob(1, b);} matches with promotion.
+
+Now for specialization:
+
+\begin{lstlisting}[language=C++]
+template <class T>
+int compare(const T& t1, const T& t2) {
+  if (t1 < t2) return -1;
+  if (t2 < t1) return 1;
+  return 0;
+}
+
+template <> //specialization
+int compare<const char*(const char* const& s1, const conar* const& s2) {
+  return strcmp(s1, s2);
+}
+\end{lstlisting}
+
+\subsection{Member functions}
+
+Distinguish 'twixt and between non-member and member functions.
+One difference is that member functions can be const functions. A const function is a member function that can NOT alter the calling object. If you want to overload the \cpp{[]} operator, make 2 revisions: a const version and a non-const version.
+
+Some stuff to know:
+
+\begin{itemize}
+  \item no return type 
+  \item no return statement
+  \item named name of class
+  \item C++ with provide a default constructor but that is suppressed when you create ANY constructor.
+\end{itemize}
+
+\begin{itemize}
+  \item 
+\end{itemize}
