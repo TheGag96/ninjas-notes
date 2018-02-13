@@ -1,0 +1,120 @@
+\section{2018-02-09}
+
+\subsection{Functors and Function classes}
+
+The \cpp{()} operator - use as a ``functor'' or ``function class''. Effectively, you wrap up a function in a class.
+
+Example:
+
+\begin{lstlisting}[language=C++]
+class bell_curve {
+  private:
+    float m_ht;
+    float m_wd;
+
+  public:
+    bell_curve(float ht = 1, float wd = 1) : m_ht(ht), m_wd(wd) { }
+    float operator()(float x) { return m_ht / (m_wd+x*x); }
+};
+
+//...
+
+bell_curve y(1, 1);
+//...
+cout << y(2);
+\end{lstlisting}
+
+
+\subsection{Friend functions}
+
+A function is a friend of a class that it has been given direct access rights to the private section of that class. Words of wisdom: \textbf{Don't trust your friends... Avoid friends.}
+
+Note: The only place that \cpp{friend} should ever appear is \underline{inside} a class definition.
+
+A function that (almost) everyone makes a non-member friend is the streaming operators.
+
+``Stoopit'' code example:
+
+\begin{lstlisting}[language=C++]
+class A {
+  public:
+    ostream& operator<<(ostream& os) const {
+      //...
+    }
+};
+
+A a;
+a << cout;  //gross code
+\end{lstlisting}
+
+
+\subsection{Static functions}
+
+Add functionality for classes that doesn't need (or can't have) a calling object
+
+\begin{lstlisting}[language=C++]
+//complex.h
+class complex {
+  public:
+    complex(float re, float im) : m_re(re), m_im(im) { }
+    static complex fileread(istream& in = cin);
+}; 
+
+//complex.cpp
+complex complex::fileread(istream& in) {
+  float r, i;
+  in >> r;
+  in >> i;
+  return complex(r, i);
+}
+
+//call
+complex z = complex::fileread(in);
+\end{lstlisting}
+
+Make data types that simply wrap around static functions:
+
+\begin{lstlisting}[language=C++]
+//definition
+struct stooge {
+  static void moe();
+  static void larry();
+  static void curly();
+};
+
+//call
+stooge::curly();
+\end{lstlisting}
+
+
+\subsection{Conversions}
+
+If your class has a constructor that takes a single variable of some type and builds an object (of course), than it can be thought of as a ``constructor for automatic conversion''. 
+
+\begin{lstlisting}[language=C++]
+complex operator+(const complex& lhs, const complex& rhs) {
+  z = u + r; // \
+  z = u + 4; // | All work
+  z = r + u; // /
+}
+\end{lstlisting}
+
+Functions for automatic conversion are called ``conversion functions''.
+
+\begin{lstlisting}[language=C++]
+class complex {
+  private:
+    float m_re, m_im;
+  
+  public:
+    //...
+    operator bool() { return m_re || m_im; }
+}
+
+float x;
+complex z;
+//...
+if (z) {
+  //do stuff
+}
+\end{lstlisting}

@@ -1,0 +1,81 @@
+\section{2018-02-07}
+
+\subsection{Constructors}
+
+You initialize if:
+
+\begin{enumerate}
+  \item if you have no default constructor
+  \item if you have a member variable that is a constant
+  \item if you have a member variable that is a reference
+\end{enumerate}
+
+You don't have to initialize if...
+
+\begin{enumerate}
+  \item members are C++ primitives
+  \item have a user defined default constructor
+  \item have no user defined other constructor 
+\end{enumerate}
+
+\subsection{Copy constructors}
+
+\cpp{A::A(const A& s);}
+
+Copy constrcutors are called...
+
+\begin{itemize}
+  \item Explicitly
+  \item pass-by-value parameters in functions
+  \item return-by-value from a function
+  \item exception is thrown
+\end{itemize}
+
+C++ provides an automatic copy constructor But, it will copy member-by-membr even if they are pointers. This leads to ``shallow'' copies - copying the pointer and not what it points to.
+
+Remember: if your class contains a pointer (referential assumption) then you should write your own...
+
+\begin{itemize}
+  \item copy constructor
+  \item copy assignment
+  \item destructor
+  \item perhaps, a defeault constructor
+\end{itemize}
+
+\subsection{Operators}
+
+...aka function for some special symbol
+
+\underline{Overloading} operators? There are some limitations:
+
+\begin{itemize}
+  \item Can't create new operators (pg. 31)
+  \item Can't change the functionality of an operator for primitives.
+  \item Can't change the arity of an operator
+  \item Can't change the order of precedence
+  \item Can't overload \cpp{::}, \cpp{.}, \cpp{.*}, \cpp{sizeof}, \cpp{?:}
+\end{itemize}
+
+Ground rules:
+
+\begin{itemize}
+  \item Make your operators make sense
+  \item Define pairs when appopriate 
+\end{itemize}
+
+Example:
+
+\begin{lstlisting}[language=C++]
+complex& complex::operator+=(const complex& rhs) {
+  m_re += rhs.m_re;
+  m_im += rhs.m_im;
+  return *this;
+}
+
+complex complex::operator+(const complex& rhs) const {
+  complex result(lhs);
+  return result += rhs;
+}
+\end{lstlisting}
+
+\cpp{[]}, \cpp{()}, and \cpp{=} are special in that any overloads of them must be member functions of the class involving them.

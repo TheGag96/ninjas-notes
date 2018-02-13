@@ -1,0 +1,63 @@
+\section{2018-02-12}
+
+\subsection{Object Lifetime}
+
+The object lifecycle:
+
+\begin{enumerate}
+  \item allocation - meory is allocated by the OS as triggered by your code
+  \item preinitialization - overhead of making the memory a C++ object, naming it, connecting it to \underline{your} program!
+  \item initialization - constructors are run
+  \item use
+  \item cleanup
+  \item pre-deallocation
+  \item deallocation
+\end{enumerate}
+
+There really are 3 types of objects in C++:
+
+\begin{enumerate}
+  \item automatic - allocated when the code requests that allocation and destroyed when out of scope
+  \item static - allocated if code runs and they persist until the end of the program
+  \item dynamic - allocated and destroyed dependent on how the program runs
+\end{enumerate}
+
+\begin{lstlisting}[language=C++]
+class Trace {
+  public:
+    Trace(const char* name); //create and print message
+    ~Trace();    
+
+  private:
+    enum {max = 100}; //max num objects to create
+    static char existingObjs[max+1]; //L=Live, D=Dead
+    static int totalCreated; //sequential number
+    int instance;
+    char varName[21];
+};
+
+int Trace::totalCreated = 0;
+char Trace::existingObjs[1+max] = "";
+
+Trace::Trace(const char* name) : instance(totalCreated++) {
+  strncpy(varName, name, 20);
+  varName[20] = '\0';
+  if (totalCreated <= max) {
+    existingObjs[totalCreated-1] = 'L'; //live now
+    existingObjs[totalCreated] = '\0'; //live now
+    cout << existingObjs << " trace created for " << varName << endl;
+    totalCreated++;
+  }
+}
+
+Trace::~Trace() {
+  if (instance < max) {
+    existingObjs[instance] = `D';
+    cout << existingObjs << " trace destroyed for " << varName << endl;
+  } 
+}
+\end{lstlisting}
+
+\subsection{Static variables}
+
+Static variables can give state to a function. Static variables persist to the end of the proram, destroying them in the reverse order in which they were allocated (on the heap). Also, local static variables are created first.
