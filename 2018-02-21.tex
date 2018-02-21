@@ -1,0 +1,129 @@
+\section{2018-02-21}
+
+\subsection{Smart Pointers}
+
+We all know that pointers are necessary to programming in C++. But the built-in pointers are too weawk and too strong: they allow the programmer too muh power with too little oversight.
+
+\textbf{aggregation} is the combining of different objets into another object. And when you ``contain'' a pointer, this is called \textbf{referential aggregation}. The problem is that the life of the pointerand what it points to don't necessary coincide. So, when objects get copied (especially by bultin copy constructors), then the possiblity of a shallow is there. (This is called ``referential aggregation''). Leaks can be caused in many ways... including ways you hadn't thought of... yet. And they can happen when you think you have everything convered - a user-defined copy constructor and assign operator.
+
+Programmer defined objects that wrap up pointers are called \textbf{smart pointers} are designed to do what thye're supposed to do and clean up after themselves. We write these smart pointers to preserve a 1-1 relationship between the pointer and what it points to.
+
+\begin{lstlisting}[language=C++]
+template <typename T>
+class CBPtr { //copied builtin pointer
+  protected:
+    T* theP;
+
+  public:
+    CBPtr() : theP(0) { }
+    CBPtr(T* justNewed) : theP(justNewed) { }
+    ~CBPtr() { delete theP; }
+    CBPtr(const CBPtr<T>& aCP) : theP(aCP.isNull() ? 0 : new T(*aCP.theP)) { }
+
+    CBPtr<T>& operator=(T* p) {
+      delete theP;
+      theP = p;
+      return *this;
+    }
+
+    CBPtr<T>& operator=(const CBPtr<T>& rhs) {
+      if (theP != rhs.theP) {
+        delete theP;
+        theP = rhs.isNull() ? 0 : new T(*rhs.theP);
+        return *this;
+      }
+    }
+
+    T& operator*() const { return *theP; }
+
+    bool isNull() const { return theP == 0; }
+
+    T* releaseControl() {
+      T* saveP = theP;
+      theP = 0;
+      return saveP;
+    }
+
+    friend bool operator==(const CBPtr<T>& lhs, const CBPtr<T>& rhs) {
+      return lhs.theP == rhs.theP;
+    }
+
+    friend bool operator!=(/* etc... */) {
+      //...
+    }
+};
+\end{lstlisting}
+
+Benefits:
+
+\begin{itemize}
+  \item one-to-one relationship between pointer and heap object
+  \item automatic copy is made when C++ auto generated copy constructor is called since the copy construcor for \cpp{CBPtr} is called
+  \item deleting the pointer deletes the heap object \textrightarrow no garbage
+  \item overloads to \cpp{*} operator
+\end{itemize}
+
+\begin{lstlisting}[language=C++]
+template <class T>
+class COPtr : public CBPtr<T> {
+  public:
+    COPtr(const COPtr<T>& p) : CBPtr<T>(p) { }
+    COPtr() : CBPtr<T>() { }
+    COPtr(T* justNewed) : CBPtr<T>(justNewed) { }
+    
+    COPtr<T>& operator=(T* rhs) {
+      CBPtr<T>::operator=(rhs);
+      return *this;
+    }
+
+    COPtr<T>& operator=(const COPtr<T>& rhs) {
+      CBPtr<T>::operator=(rhs);
+      return *this;
+    }
+
+    T* operator->() const { return theP; }
+}
+\end{lstlisting}
+
+Note: the \cpp{CBPtr} class is for built-in types. It doesn't add (should not) have an overload of the \cpp{->} operator. This operator should return either a built-in pointer to a class object or an object of a pointer-like class with an overload of the \cpp{->} operator. (Built-in pointers to built-in objects cannot be returned.) An example:
+
+\begin{lstlisting}[language=C++]
+class Leaker {
+  public:
+    Leaker(int size) : p(new float(0), array(size) { }
+    Leaker(const Leaker& lkr) : p(new float*(lkr.p)) { }
+    ~Leaker() { delete p; }
+    
+    Leakaer& opeartor=(const Leaker& lkr) {
+      p     = new float(*lkr.p);
+      array = lkr.array;
+      
+      return *this;
+    }
+
+  private:
+    float * p;
+    Array<int> array; 
+};
+
+//...
+
+void f() {
+  Leaker l(-1);
+  //...
+}
+\end{lstlisting}
+
+When \cpp{f} is called, the constructor for Leaker is called. The float is allocated and we try to construct the array with a negative size. An exception is thrown! Since all \textbf{fully constructed} objects get deallocated here, \underline{we have a leak}.
+
+\begin{lstlisting}[language=C++]
+class NonLeaker {
+  public:
+    NonLeaker(int size) : p(new float(0)), array(size) { }
+    //...
+
+  private:
+    CBPtr<float> p;
+    Array<int> array;
+};
+\end{lstlisting}

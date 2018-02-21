@@ -1,0 +1,51 @@
+\section{2018-02-16}
+
+\subsection{The copy/swap maneuver}
+
+...for the overload of the assignment operator. In our array class, we had an overload of the assignment operator - that was this:
+
+\begin{lstlisting}[language=C++] 
+Array& Array::operator=(const Array& s) {
+  if (ptrToData != s.ptrToData) {
+    setSize(s.m_size);
+    for (int i = 0; i < m_size; i++) {
+      ptrToData[i] = s.ptrToData[i];
+    }
+  }
+
+  return *this;
+}
+\end{lstlisting}
+
+Can we do better? Problems with that code:
+
+\begin{enumerate}
+  \item To make allowance for self-assignment
+  \item Time spent wakling down the array
+\end{enumerate}
+
+Answer:
+
+\begin{lstlisting}[language=C++] 
+Array& Array::operator=(Array s) {
+  swap(*this, s);
+  return *this;
+}
+\end{lstlisting}
+
+Way Kool\textsuperscript{\$\textregistered\texttrademark} code.
+
+Most important! is that you undertsand the swap used here. You need to write your own swpa function.
+
+\begin{lstlisting}[language=C++] 
+class Array {
+  public:
+    //...
+    friend void swap(Array& a1, Array& a2) {
+      std::swap(a1.size, a2.size);
+      std::swap(a1.ptrToData, a2.ptrToData);
+    }
+}
+\end{lstlisting}
+
+We can't use the std::swap to swap the arrays because it uses the copy constructor and the assignment operator - that which we are trying to overload! SO, in our new version of \cpp{operator=}, we use \underline{pass-by-value} letting the compiler make the copy for us usingour copy constructor. If it fails, then \cpp{*this} is not affected. And, when the copy is made, we just steal the ptr, as we did with a move constructor. The passed object goes out of scope and we have the goods. 

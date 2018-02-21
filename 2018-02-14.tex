@@ -1,0 +1,130 @@
+\section{2018-02-14}
+
+\subsection{Dynamic Memory}
+
+Some points:
+
+\begin{itemize}
+  \item Objects are allocated by a call to \cpp{new} and dellocated by a call to \cpp{delete}.
+  \item Objects are created as the program needs them.
+  \item So, there needs to be no relationship between dynamic memory and variables - known at compile time.
+  \item \cpp{new} will invoke the appropriate constructor.
+  \item New arrays of objects requrie a default constructor.
+\end{itemize}
+
+Upside of dynamic memory: \textbf{flexibility}. Downside: \textbf{memory management}.
+
+Construction:
+
+\begin{lstlisting}[language=C++]
+int* p = new int;
+int* q = new int[/* ? size */];
+\end{lstlisting}
+
+Destruction: Always a call to new with \underline{an appropriate} call to \cpp{delete}.
+
+\begin{lstlisting}[language=C++]
+delete p;
+delete[] q;
+\end{lstlisting}
+
+Bad deletions \textrightarrow B I G   P R O B L E M S
+
+\subsection{Dangling pointers}
+
+\subsubsection{Shallow copies}
+
+Shallow copies - Copying a pointer instead of what it points to. Deleting both, you have a ``double delete''.
+
+Fix: write your own copy constructor and assignment operator
+
+\begin{lstlisting}[language=C++]
+class bad {
+  public:
+    bad() { p = new int(0); }
+    ~bad() { delete p; }
+    int* p;
+};
+
+//...
+
+void f() {
+  bad a;
+  bad b = a;
+  //...
+}
+\end{lstlisting}
+
+What happens...? When control leaves the scope of \cpp{f()}, we got a double delete. Here's an alternative:
+
+\begin{lstlisting}[language=C++]
+class good {
+  public:
+    good() { p = new int(0); }
+    ~good() { delete p; }
+    good(const good& s) : p(new int(*s.p)) { }
+    
+    good& operator=(const good& s) {
+      if (s.p != p) {
+        delete p;
+        p = new int(*s.p);
+      }
+      return *this;
+    }
+    
+    int* p;
+};
+\end{lstlisting}
+
+\subsubsection{Setting a poniter to an automatic object}
+
+When the object goes out of scope, the pointer points to nothing.
+
+FIx: Don't point to automatic objects.
+
+\subsubsection{Deleting a function parameter}
+
+Suppose you pass a pointer to function and delete it there? In the calling function the pointer is useless.
+
+Fix: Don't do this - don't delete function parameters.
+
+\subsubsection{Garbage}
+
+Use smart pointers.
+
+\subsection{The Story}
+
+(Paraphrased)
+
+``I don't know if I have time, but I've got to tell you this story. I've lived a long time and I've lived through a bunch of crazy shit in my life. In 1983, before this event, medicine packaging did not have as many layers as it did today: Someone had gone and injected extra-strength Tylenol into a bunch of packages of medicine. That semester, before a test, one of my students got up and set an apple on my desk - everyone chuckled a bit. He went on to fail the test, and after he did, he then set a little package on the desk. It was Tylenol, but the guy had scratched onto the label, `Extra-Strength' next to `Tylenol', which everyone thought was pretty funny. Nowadays, that kid would get in huge trouble and get sued and everything, but back then I just thought it was pretty darn funny.''
+
+In the middle of telling this story, he told another story of his friends leaving another one of his friends who was to be married the next day on a train car. He woke up the next day in Oklahoma City.
+
+\subsection{Curves}
+
+Lagrange form = Newtwon form
+
+\begin{equation}
+  P_N(x) = a_0 + a_1 (x - x_0) + a_2 (x - x_1) (x - x_0) + ... + a_N (x - x_{N-1}) ... (x - x_0)
+\end{equation}
+
+Where $a_k = f[x_0, x_1, x_2, ..., x_k]; k = 0, 1, ..., N$
+
+f[]:
+
+\begin{align*}
+  f[x_k]                   &= f(x_k) = y_k \\
+  f[x_{k-1}, x_k]          &= \frac{f[x_k] - f[x_{k-1}]}{x_k - x_{k-1}} \\
+  f[x_{k-2}, x_{k-1}, x_k] &= \frac{f[x_{k-1}, x_k] - f[x_{k-2}, x_{k-1}]}{x_k - x_{k-2}}
+\end{align*}
+
+\underline{The Table:}
+
+\begin{tabular}{ |c|c|c|c|c| }
+$x_k$ & $y_k$ & $f[,]$        & $f[,,]$            & $f[,,,]$\\
+\hline
+$x_0$ & $y_0$ & -             & -                  & - \\
+$x_1$ & $y_1$ & $f[x_0, x_1]$ & -                  & - \\
+$x_2$ & $y_2$ & $f[x_1, x_2]$ & $f[x_0, x_1, x_2]$ & - \\
+$x_3$ & $y_3$ & $f[x_2, x_3]$ & $f[x_1, x_2, x_3]$ & $f[x_0, x_1, x_2, x_3]$
+\end{tabular}

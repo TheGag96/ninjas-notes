@@ -57,17 +57,17 @@ There are levels of consideration that C++ will go through to know how to resolv
 
   Suppose we have:
 
-\begin{lstlisting}[language=C++]
+  \begin{lstlisting}[language=C++]
 template <class T>
 void bob(T a, const T& b);
-\end{lstlisting}
+  \end{lstlisting}
 
-  Member of the class include
+  Member of the class include:
   
-\begin{lstlisting}[language=C++]
+  \begin{lstlisting}[language=C++]
 void bob(int a, const int& b);
 void bob(char a, const char& b);
-\end{lstlisting}
+  \end{lstlisting}
 
 \end{enumerate}
 

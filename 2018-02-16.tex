@@ -1,0 +1,131 @@
+\section{2018-02-16}
+
+\subsection{Move Semantics}
+
+So, you know one of the most important goals in writing code is to make it fast. But there are many forces in our world wokring against that effort. One BIG one is the generation of objects - in particular, temporary objects that just end up discraded anyway.
+
+\begin{lstlisting}[language=C++]
+class Array;
+
+Array squares(const Array& a) {
+  int n = a.getSize();
+  Array sqArray(n);
+  for (int i = 0; i < n; i++) {
+    sqArray[i] = a[i] * a[i];
+  }
+
+  return sqArray;
+};
+
+//...in main...
+
+Array stuff(10000);
+//...
+stuff = squares(stuff);
+\end{lstlisting}
+
+So what's the problem? Copies! Too many copies... of arrays. Can we avoid all the copying? \underline{Yes.} The temporary objects just get discarded. But inthe past, we had no way to identify temporary objects. Now we do.
+
+\subsection{rvalues and lvalues}
+
+An \textbf{lvalue} (formerly left-hand value) is an expression with a locatable memory... a ``locator value''.
+
+\begin{lstlisting}[language=C++]
+//ex. 1
+short x; 
+x = 10;
+
+//ex. 2
+int x;
+int& getX() { return x; }
+getX() = 10;
+\end{lstlisting}
+
+So, an lvalue need not be a variable.
+
+An \textbf{rvalue} is \underline{not} an lvalue. An expression that is a temporary object.
+
+\begin{lstlisting}[language=C++]
+//ex. 1
+int x;
+int getX() { return 4; }
+getX(); //temporary object
+x = getX(); //assigning from a temporary object
+\end{lstlisting}
+
+Can we identify temporary objects in pre-C++11? No, we couldn't. An \textbf{rvalue reference} is a refernce that will only bind to a temporary object. Before C++11:
+
+\begin{lstlisting}[language=C++]
+const int& z = getX(); //OK
+int& z = getX();       //NO
+\end{lstlisting}
+
+You couldn't have a mutable reference to a temporary object. C++11 introduces the rvalue reference that wil bind to an rvalue and \underline{not} an lvalue.
+
+\begin{lstlisting}[language=C++]
+const int&& z = getX(); //OK
+int&& z = getX();       //also OK
+\end{lstlisting}
+
+So, an rvalue reference can detect a temporary object. 
+
+Consider these two facts:
+
+\begin{lstlisting}[language=C++]
+void printref(const string& s) { cout << s; } //1
+void printref(string&& s)      { cout << s; } //2
+\end{lstlisting}
+
+Function 1 will accept a\underline{any} (mutable or not) lvalue or rvalue. But, if function 2 is present, will accept \underline{all but} mutable rvalue references.
+
+
+\subsection{Move Constructors}
+
+Like a copy constructor, a \textbf{move constructor} builds a new object. But, rather than create new memory, it will ``move'' the object. It can because it knows the argument is a temporary object - an rvalue reference. If the argument is a primitive, move is just a copy. But if the object to copy is/has  has a pointer, it will just steal the pointer. This works because the old object is about to go away.
+
+For Array:
+
+\begin{lstlisting}[language=C++]
+class Array {
+  public:
+    //...
+    Array(Array&& other) : ptrToData(other.ptrToData), size(other.size) {
+      other.ptrToData = nullptr;
+      other.size = 0;
+    }
+
+  //...
+};
+\end{lstlisting}
+
+We set the other's pointer to null because it's a temp object about to be released from the ``Old Array Folks Home''. Now suppose that the class you are writing the move constructor for contains an object. How will it be handled?
+
+\begin{lstlisting}[language=C++]
+class data {
+  int size;
+  string name;
+  
+  public:
+    data(int s, const string& n) : size(s), name(n) { }
+    data(const data& other) : size(other.size), name(other.name) { }
+    data(data&& other) : size(other.size), name(other.name) {  }
+};
+
+class Array {
+  float* ptrToData;
+  data sizeAndName;
+  
+  public:
+    //...
+};
+\end{lstlisting}
+
+Will this work? Does it work for Array's move constructor to call data's move constructor? \textbf{No.} We must \cpp{#include <utility>} //for std::move:
+
+\begin{lstlisting}[language=C++]
+Array(Array&& other) : ptrToData(other.ptrToData), data(std::move(other.data)) {
+  other.ptrTOData = nullptr;
+}
+\end{lstlisting}
+
+And we must do the same for data's move. The reason: the \cpp{other} in Array's move constructor is an rvalue reference. But, an rvalue reference is not an rvalue it's an lvalue. So, we ahve to change it. The \cpp{std::move} casts that lvalue to an rvalue reference.

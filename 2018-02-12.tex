@@ -52,7 +52,7 @@ Trace::Trace(const char* name) : instance(totalCreated++) {
 
 Trace::~Trace() {
   if (instance < max) {
-    existingObjs[instance] = `D';
+    existingObjs[instance] = 'D';
     cout << existingObjs << " trace destroyed for " << varName << endl;
   } 
 }
