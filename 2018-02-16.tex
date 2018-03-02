@@ -76,7 +76,7 @@ void printref(const string& s) { cout << s; } //1
 void printref(string&& s)      { cout << s; } //2
 \end{lstlisting}
 
-Function 1 will accept a\underline{any} (mutable or not) lvalue or rvalue. But, if function 2 is present, will accept \underline{all but} mutable rvalue references.
+Function 1 will accept \underline{any} (mutable or not) lvalue or rvalue. But, if function 2 is present, will accept \underline{all but} mutable rvalue references.
 
 
 \subsection{Move Constructors}

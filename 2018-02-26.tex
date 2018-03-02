@@ -1,0 +1,125 @@
+\section{2018-02-26}
+
+\subsection{Inner Product Spaces}
+
+\subsubsection{Some definitions}
+
+\underline{Definition:} An \textbf{inner product} on a vector space $V$ is a real-valued function over $V$ with
+
+\begin{enumerate}
+  \item $(\alpha, \alpha) > 0; \forall \alpha \in V$ 
+  \item $(\alpha, \beta) = (\beta, \alpha); \forall \alpha, \beta \in V$ 
+  \item $(\alpha + \beta, \gamma) = (\alpha, \gamma) + (\beta, \gamma)$
+  \item $(c\alpha, \beta) = c(\alpha, \beta);$ c a scalar
+\end{enumerate}
+
+\subsubsection{Theorem: Cauchy-Schwarz Inequality}
+
+For any $\alpha, \beta \in V, (\alpha, \beta)^2 \leq |\alpha|^2 |\beta|^2$, where $|\alpha| = \sqrt{(\alpha, \beta)}$
+
+\underline{Proof:}
+
+If $\alpha = \emptyset$, then $(\alpha, \beta) = 0$ and the inequality holds. Suppose, $\alpha \neq \emptyset$, and let $r \neq 0 \in \mathbb{R}$ and we consider
+
+\begin{align*}
+  0 \leq (r\alpha + \beta, r\alpha + \beta) & = r^2(\alpha, \alpha) + 2r(\alpha, \beta) + (\beta, \beta) \\
+                                            & = a r^2 + 2br + c\text{, where} \\
+                                            & a = (\alpha, \alpha), b = (\alpha, \beta), c = (\beta, \beta)
+\end{align*}
+
+Well, $ar^2 + 2br + c$ is a quadratic in $r$ that is non-negative.
+
+\begin{align*}
+  \rightarrow 4b^2 - 4ac & \leq 0 \\
+              b^2 - ac   & \leq 0 \\
+              b^2        & \leq ac \\
+\\
+       (\alpha, \beta)^2 &\leq |\alpha|^2 + |\beta|^2
+\end{align*}
+
+
+\subsubsection{Theorem: Triangle Inequality}
+
+For any $\alpha$ and $\beta$ in $V$, $|\alpha + \beta| \leq |\alpha| + |\beta|$
+
+\underline{Proof:}
+
+\begin{align*}
+  |\alpha+\beta|^2 = (\alpha+\beta, \alpha+\beta) & = (\alpha+\alpha) + (\beta, \alpha) + (\alpha + \beta) + (\beta, \beta)
+                                                  & = |\alpha|^2 + 2(\alpha, \beta) + |\beta|^2
+                                                  & \leq |\alpha|^2 + 2|\alpha||\beta| + |\beta|^2
+                                                  & = (|\alpha| + |\beta|)^2
+\end{align*}
+
+
+\underline{Definition:} Let $V$ be an \textbf{inner product space}, then we say that $\alpha, \beta \in V$ are orthogonal if $(\alpha, \beta) = 0$ 
+
+Example:
+
+In $\mathbb{R}^2$ ($n \leq 3$ by my memory), the ``dot product'' is an inner product. The cross product is NOT an inner product.
+
+
+\subsubsection{The Gram-Schmidt method}
+
+Recall: We all agreed that a basis is best when it is orthogonal (the basis vectors are of length and all mutually orthogonal).
+
+Q: If we have an arbitrary basis for $V$, can we create from it an orthogonal (even orthogonal) basis? The technique is called \textbf{the Gram-Schmidt method}.
+
+The method:
+
+Suppose $T = {\alpha_1, \alpha_2, ... \alpha_n}$ is  abasis for a vector space. We wish to generate a set of vectors ${\beta_1, \beta_2, ... \beta_n}$ that is an orthogonal basis from this basis, T.
+
+\begin{enumerate}
+  \item Let $\beta_1 = \alpha_1$. Now, find $\beta_2$ so that $\beta_1 \perp \beta_2$ and $\beta_1, \beta_2$ spans the same subspace as ${\alpha_1, \alpha_2}$ or ${\beta_1, \alpha_2}$. We have: $\beta_2 = a_1\alpha_1 + a_2\alpha_2 = a_1\beta_1 + a_2\alpha_2$
+
+  But we want:
+  \begin{align*}
+    (\beta_1, \beta_2) = &0 = (\beta_1, a_1\beta_1 + a_2\alpha_2) \\ 
+                         &0 = a_1(\beta_1, \beta_1) + a_2(\alpha_2, \beta_1)
+  \end{align*}
+
+  Let $a_2 = 1$. Solve for $a_1$.
+
+  \begin{equation}
+    a_1 = \frac{-a_2(\alpha_2, \beta_1)}{(\beta_1, \beta_1)}
+  \end{equation}
+
+  \begin{equation}
+    \beta_2 = \frac{\alpha_2 - a_2(\alpha_2, \beta_1)}{(\beta_1, \beta_1)} \beta_1
+  \end{equation}
+
+  \item Next, we want to find $\beta_3$ so that ${\beta_1, \beta_2, \beta_3}$ spans the same subspace as ${\alpha_1, \alpha_2, \alpha_3}$ or ${\beta_1, \beta_2, \alpha_3}$ and they're all orthogonal to each other. We want:
+
+  \begin{align*}
+    (\beta_1, \beta_3) &= 0 = b_1(\beta_1, \beta_1) = b_2(\beta_1, \beta_2) + b_3(\beta_1, \alpha_3) \\
+    (\beta_2, \beta_3) &= 0 = b_1(\beta_2, \beta_1) = b_2(\beta_2, \beta_2) + b_3(\beta_2, \alpha_3) \\
+                       &\text{Let}\ b_3 = 1 \\
+                       &b_1 = \frac{-(\beta_1, \alpha_3)}{(\beta_1, \beta_1)}, b_2 = \frac{-(\beta_2, \alpha_3)}{(\beta_2, \beta_1)}
+  \end{align*}
+
+  So,
+
+  \begin{equation}
+    \therefore \beta_k = \alpha_k - \sum_{h=1}^{k-1} \frac{(\beta_h, \alpha_k)}{(\beta_h, \beta_h)} \beta_h; k = 1, ..., n
+  \end{equation}
+
+  And, an orthogonal basis is obtained by
+
+  \begin{equation}
+    {\frac{\beta_1}{|\beta_1|}, \frac{\beta_2}{|\beta_2|}, ..., \frac{\beta_n}{|\beta_n|}}  
+  \end{equation}
+
+  If $S = {\alpha_1, ..., \alpha_n}$ an orthogonal basis for the vector space and $r \in V$ is arbitrary:
+
+  \begin{equation}
+    V = a_1\alpha_1 + a_2\alpha_2 + ... + a_n\alpha_n
+  \end{equation}
+
+  Finding the multipliers is a cakewalk.
+
+  \begin{align*}
+    (\alpha_1, r) &= (\alpha_1, a_1\alpha_1) + (\alpha_1, a_1\alpha_2) + ...
+                  &= a_1(a_1\alpha_1) + a_2(a_1\alpha_2)
+  \end{align*}
+
+ \end{enumerate} 
