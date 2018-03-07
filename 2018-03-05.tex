@@ -4,12 +4,12 @@
 
 \subsubsection{General stuff}
 
-A matrix (an augmented matrix) can be used to represent a system of linear equations, and so our matrix operations can easily be used to solve (or not) the system.
+A matrix (an augmented matrix) can be used to represent a system of linear equations, and so our matrix operations can easily be used to solve (or not) the system. In other words, we can solve problems like this:
 
 \begin{align*}
-  3x -  4y + z  & = 11 \\
-  -4x + y       & = 0 \\
-  x -   2y + 4z & = 9
+  3x -  4y + z  &= 11 \\
+  -4x + y       &= 0 \\
+  x -   2y + 4z &= 9
 \end{align*}
 
 \subsubsection{Theorem}
@@ -36,13 +36,13 @@ In addition to the 3 properties demanded for vector norms, we also demand:
 Example:
 
 \begin{align*}
-  ||A||_1 = \text{max}_{i \leq j \leq n} \sum_{i=1}^{n} |a_{ij}|,\ 
+  ||A||_1 = \text{max}_{i \leq j \leq n} \sum_{i=1}^{n} |a_{ij}|,\
   ||A||_\infty = \text{max}_i \sum_{i,j=1}^n |a_{ij}|
 \end{align*}
 
 \subsubsection{Frobenius norm}
 
-Let $nA_n$ of real values. Consider the $O_2(p_2)$ norm. Then:
+Let ${}_{n}A_{n}$ of real values. Consider the $O_2(p_2)$ norm. Then:
 
 \begin{align*}
   ||A\bar{x}||_2 & = \sqrt{\sum_{i=1}^n | \sum_{j=1}^n a_{ij} x_j |^2},\ x \in \mathbb{R}^n \\
@@ -63,10 +63,13 @@ Example:
 \end{align*}
 
 \begin{align*}
-  ||A||_1 &= max_j \{8, 8, 6, -1\} = 8
-  ||A||_\infty = max_i &= \{6, 5, 7, 5\} = 7
+  ||A||_1 &= max_j \{8, 8, 6, -1\} = 8 \\
+  ||A||_\infty &= max_i \{6, 5, 7, 5\} = 7 \\
   ||A||_F &= \sqrt{1 + 4 + 9 + 0 + 16 + 0 + 1 + 0 + 4 + 25 + 0 + 0 + 1 + 1 + 4 + 1} = \sqrt{67} \approx \mathbf{8.18}
 \end{align*}
+
+
+\subsubsection{Operator norm}
 
 Given a vector norm, the associated matrix norm (called the \textbf{operator norm}) is given by:
 
