@@ -24,11 +24,11 @@ Array stuff(10000);
 stuff = squares(stuff);
 \end{lstlisting}
 
-So what's the problem? Copies! Too many copies... of arrays. Can we avoid all the copying? \underline{Yes.} The temporary objects just get discarded. But inthe past, we had no way to identify temporary objects. Now we do.
+So what's the problem? Copies! Too many copies... of arrays. Can we avoid all the copying? \underline{Yes.} The temporary objects just get discarded. But in the past, we had no way to identify temporary objects. Now we do.
 
-\subsection{rvalues and lvalues}
+\subsection{Rvalues and lvalues}
 
-An \textbf{lvalue} (formerly left-hand value) is an expression with a locatable memory... a ``locator value''.
+An \textbf{lvalue} (formerly left-hand value) is an expression with a locatable memory... a ``locater value''.
 
 \begin{lstlisting}[language=C++]
 //ex. 1
@@ -128,4 +128,4 @@ Array(Array&& other) : ptrToData(other.ptrToData), data(std::move(other.data)) {
 }
 \end{lstlisting}
 
-And we must do the same for data's move. The reason: the \cpp{other} in Array's move constructor is an rvalue reference. But, an rvalue reference is not an rvalue it's an lvalue. So, we ahve to change it. The \cpp{std::move} casts that lvalue to an rvalue reference.
+And we must do the same for data's move. The reason: the \cpp{other} in Array's move constructor is an rvalue reference. But, an rvalue reference is not an rvalue it's an lvalue. So, we have to change it. The \cpp{std::move} casts that lvalue to an rvalue reference.

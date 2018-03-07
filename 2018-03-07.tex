@@ -1,0 +1,36 @@
+\section{2018-03-07}
+
+\subsection{Some ideas for the matrix assignment}
+
+\subsubsection{Your matrix class}
+
+\begin{enumerate}
+  \item \ 
+\begin{lstlisting}[language=C++]
+  myvect<myvect<T>> elem;
+\end{lstlisting}
+
+    \begin{itemize}
+      \item quick and dirty
+      \item easy
+    \end{itemize}
+
+  \item \ 
+\begin{lstlisting}[language=C++]
+  myvect<myvect<T>> elem;
+  elm = new myvect<T>[rows];
+\end{lstlisting}
+
+  \item \ 
+\begin{lstlisting}[language=C++]
+  T* elem;
+  elm = new T[row*col];
+\end{lstlisting}
+
+  \item \ 
+\begin{lstlisting}[language=C++]
+  T** elem;
+  elm = new T*[rows];
+  for (i = 0; i < rows; i++) elm[i] = new T[cols];
+\end{lstlisting}
+\end{enumerate}

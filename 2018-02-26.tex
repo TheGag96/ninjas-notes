@@ -67,7 +67,7 @@ Q: If we have an arbitrary basis for $V$, can we create from it an orthogonal (e
 
 The method:
 
-Suppose $T = {\alpha_1, \alpha_2, ... \alpha_n}$ is  abasis for a vector space. We wish to generate a set of vectors ${\beta_1, \beta_2, ... \beta_n}$ that is an orthogonal basis from this basis, T.
+Suppose $T = {\alpha_1, \alpha_2, ... \alpha_n}$ is a basis for a vector space. We wish to generate a set of vectors ${\beta_1, \beta_2, ... \beta_n}$ that is an orthogonal basis from this basis, T.
 
 \begin{enumerate}
   \item Let $\beta_1 = \alpha_1$. Now, find $\beta_2$ so that $\beta_1 \perp \beta_2$ and $\beta_1, \beta_2$ spans the same subspace as ${\alpha_1, \alpha_2}$ or ${\beta_1, \alpha_2}$. We have: $\beta_2 = a_1\alpha_1 + a_2\alpha_2 = a_1\beta_1 + a_2\alpha_2$
@@ -80,13 +80,13 @@ Suppose $T = {\alpha_1, \alpha_2, ... \alpha_n}$ is  abasis for a vector space. 
 
   Let $a_2 = 1$. Solve for $a_1$.
 
-  \begin{equation}
+  \begin{align*}
     a_1 = \frac{-a_2(\alpha_2, \beta_1)}{(\beta_1, \beta_1)}
-  \end{equation}
+  \end{align*}
 
-  \begin{equation}
+  \begin{align*}
     \beta_2 = \frac{\alpha_2 - a_2(\alpha_2, \beta_1)}{(\beta_1, \beta_1)} \beta_1
-  \end{equation}
+  \end{align*}
 
   \item Next, we want to find $\beta_3$ so that ${\beta_1, \beta_2, \beta_3}$ spans the same subspace as ${\alpha_1, \alpha_2, \alpha_3}$ or ${\beta_1, \beta_2, \alpha_3}$ and they're all orthogonal to each other. We want:
 
@@ -99,21 +99,21 @@ Suppose $T = {\alpha_1, \alpha_2, ... \alpha_n}$ is  abasis for a vector space. 
 
   So,
 
-  \begin{equation}
+  \begin{align*}
     \therefore \beta_k = \alpha_k - \sum_{h=1}^{k-1} \frac{(\beta_h, \alpha_k)}{(\beta_h, \beta_h)} \beta_h; k = 1, ..., n
-  \end{equation}
+  \end{align*}
 
   And, an orthogonal basis is obtained by
 
-  \begin{equation}
+  \begin{align*}
     {\frac{\beta_1}{|\beta_1|}, \frac{\beta_2}{|\beta_2|}, ..., \frac{\beta_n}{|\beta_n|}}  
-  \end{equation}
+  \end{align*}
 
   If $S = {\alpha_1, ..., \alpha_n}$ an orthogonal basis for the vector space and $r \in V$ is arbitrary:
 
-  \begin{equation}
+  \begin{align*}
     V = a_1\alpha_1 + a_2\alpha_2 + ... + a_n\alpha_n
-  \end{equation}
+  \end{align*}
 
   Finding the multipliers is a cakewalk.
 

@@ -13,7 +13,7 @@ float& min_element(Array<float>& a) {
 }
 \end{lstlisting}
 
-This return by reference, though legal andpreferred in some cases, can lead to heartbreak. This is because that reference creates a ``backdoor'' into the class.
+This return by reference, though legal and preferred in some cases, can lead to heartbreak. This is because that reference creates a ``backdoor'' into the class.
 
 \begin{lstlisting}[language=C++]
 Array<float> a(10);
@@ -48,7 +48,7 @@ There are levels of consideration that C++ will go through to know how to resolv
 
     \item User-defined conversions. Be careful that your code only defines one way to convert from one type to another. (e.g. \cpp{void bob(int, float);} and \cpp{void bob(int, double);})
 
-    What does \cpp{bob(1, 2);}? C++ will flag an error - ambigious funtion call
+    What does \cpp{bob(1, 2);}? C++ will flag an error - ambiguous function call
 
     \textbf{If you need to search the rules for function call resolution you need to rewrite your code.}
   \end{enumerate}

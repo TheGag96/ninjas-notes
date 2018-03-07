@@ -5,8 +5,8 @@
 The object lifecycle:
 
 \begin{enumerate}
-  \item allocation - meory is allocated by the OS as triggered by your code
-  \item preinitialization - overhead of making the memory a C++ object, naming it, connecting it to \underline{your} program!
+  \item allocation - memory is allocated by the OS as triggered by your code
+  \item pre-initialization - overhead of making the memory a C++ object, naming it, connecting it to \underline{your} program!
   \item initialization - constructors are run
   \item use
   \item cleanup
@@ -60,4 +60,4 @@ Trace::~Trace() {
 
 \subsection{Static variables}
 
-Static variables can give state to a function. Static variables persist to the end of the proram, destroying them in the reverse order in which they were allocated (on the heap). Also, local static variables are created first.
+Static variables can give state to a function. Static variables persist to the end of the program, destroying them in the reverse order in which they were allocated (on the heap). Also, local static variables are created first.

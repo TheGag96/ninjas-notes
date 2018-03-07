@@ -3,7 +3,7 @@
 
 \subsection{Make and makefiles}
 
-\shellcmd{make} is a Unix command. It's part of a utility that's designed to lead to easier building of programs the goal is to simplify the process. Many times, the creation of an executable is a very quick, simple, easy (cheesy) compile command. With just a few files, that suffices. But, many times, projects are comprised  of more than just a few files. Also, you may change just one file, there's no need to rebuild allt he files in the project -- only the file(s) that have been changed or are depndencies of those files. \shellcmd{make} has the ability to accomplish this. It uses the time stamps and it knows the dependencies.
+\shellcmd{make} is a Unix command. It's part of a utility that's designed to lead to easier building of programs the goal is to simplify the process. Many times, the creation of an executable is a very quick, simple, easy (cheesy) compile command. With just a few files, that suffices. But, many times, projects are comprised  of more than just a few files. Also, you may change just one file, there's no need to rebuild all the files in the project -- only the file(s) that have been changed or are dependencies of those files. \shellcmd{make} has the ability to accomplish this. It uses the time stamps and it knows the dependencies.
 
 \subsubsection{The basics}
 
@@ -67,7 +67,7 @@ clean :
 
   Will print a \shellcmd{\^I} anywhere there is a tab char, and a \shellcmd{\$} at the end of every line.
 
-  "When using Makefiles, you must use tabs to indent. In jpico, when you press tab, it puts something that \textit{looks} like a tab. But it's not a tab. It took me about 3 or 4 hours to figure it out. jpico is named after a guy named Joe. I looked him up, and he died several years earlier, but I dug him up and killed him again." --Captain Price, 2018
+  "When using Makefiles, you must use tabs to indent. In jpico, when you press tab, it puts something that \textit{looks} like a tab. But it's not a tab. It took me about 3 or 4 hours to figure it out. Jpico is named after a guy named Joe. I looked him up, and he died several years earlier, but I dug him up and killed him again." --Captain Price, 2018
 
   \item \shellcmd{\textbackslash} at the end of a line continues that line on the next line of the file (no space between the \shellcmd{\textbackslash} and the newline char)
   \item Don't use tabs anywhere else.

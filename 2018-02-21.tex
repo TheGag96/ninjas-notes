@@ -2,11 +2,11 @@
 
 \subsection{Smart Pointers}
 
-We all know that pointers are necessary to programming in C++. But the built-in pointers are too weawk and too strong: they allow the programmer too muh power with too little oversight.
+We all know that pointers are necessary to programming in C++. But the built-in pointers are too weak and too strong: they allow the programmer too much power with too little oversight.
 
-\textbf{aggregation} is the combining of different objets into another object. And when you ``contain'' a pointer, this is called \textbf{referential aggregation}. The problem is that the life of the pointerand what it points to don't necessary coincide. So, when objects get copied (especially by bultin copy constructors), then the possiblity of a shallow is there. (This is called ``referential aggregation''). Leaks can be caused in many ways... including ways you hadn't thought of... yet. And they can happen when you think you have everything convered - a user-defined copy constructor and assign operator.
+\textbf{Aggregation} is the combining of different objets into another object. And when you ``contain'' a pointer, this is called \textbf{referential aggregation}. The problem is that the life of the pointer and what it points to don't necessary coincide. So, when objects get copied (especially by built-in copy constructors), then the possibility of a shallow is there. (This is called ``referential aggregation''). Leaks can be caused in many ways... including ways you hadn't thought of... yet. And they can happen when you think you have everything covered, like a user-defined copy constructor and assign operator.
 
-Programmer defined objects that wrap up pointers are called \textbf{smart pointers} are designed to do what thye're supposed to do and clean up after themselves. We write these smart pointers to preserve a 1-1 relationship between the pointer and what it points to.
+Programmer-defined objects that wrap up pointers are called \textbf{smart pointers} are designed to do what they're supposed to do and clean up after themselves. We write these smart pointers to preserve a 1-1 relationship between the pointer and what it points to.
 
 \begin{lstlisting}[language=C++]
 template <typename T>
@@ -58,7 +58,7 @@ Benefits:
 
 \begin{itemize}
   \item one-to-one relationship between pointer and heap object
-  \item automatic copy is made when C++ auto generated copy constructor is called since the copy construcor for \cpp{CBPtr} is called
+  \item automatic copy is made when C++ auto-generated copy constructor is called since the copy constructor for \cpp{CBPtr} is called
   \item deleting the pointer deletes the heap object \textrightarrow no garbage
   \item overloads to \cpp{*} operator
 \end{itemize}
@@ -85,7 +85,7 @@ class COPtr : public CBPtr<T> {
 }
 \end{lstlisting}
 
-Note: the \cpp{CBPtr} class is for built-in types. It doesn't add (should not) have an overload of the \cpp{->} operator. This operator should return either a built-in pointer to a class object or an object of a pointer-like class with an overload of the \cpp{->} operator. (Built-in pointers to built-in objects cannot be returned.) An example:
+Note: the \cpp{CBPtr} class is for built-in types. It doesn't add (and should not) have an overload of the \cpp{->} operator. This operator should return either a built-in pointer to a class object or an object of a pointer-like class with an overload of the \cpp{->} operator. (Built-in pointers to built-in objects cannot be returned.) An example:
 
 \begin{lstlisting}[language=C++]
 class Leaker {

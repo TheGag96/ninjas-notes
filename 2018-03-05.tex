@@ -1,0 +1,102 @@
+\section{2018-03-05}
+
+\subsection{Matrices}
+
+\subsubsection{General stuff}
+
+A matrix (an augmented matrix) can be used to represent a system of linear equations, and so our matrix operations can easily be used to solve (or not) the system.
+
+\begin{align*}
+  3x -  4y + z  & = 11 \\
+  -4x + y       & = 0 \\
+  x -   2y + 4z & = 9
+\end{align*}
+
+\subsubsection{Theorem}
+
+Let $A$ be a real matrix and $V \in \mathbb{R}^n$. These are equivalent:
+
+\begin{enumerate}
+  \item $Ax = B$ has a unique solution for every $B \in V$
+  \item $Ax = B \rightarrow x = \emptyset \text{iff} B \equiv \emptyset$
+  \item $A^{-1}$ exists - $A^{-1}$ is such that $AA^{-1} = A^{-1}A = I$
+  \item $\text{det}(A) \neq 0$ (det = determinant)
+  \item $\text{rank}(A) = n$ (rank = number of linearly independent rows)
+\end{enumerate}
+
+\subsubsection{Matrix norms}
+
+In addition to the 3 properties demanded for vector norms, we also demand:
+
+\begin{enumerate}
+  \item $||AB|| \leq ||A|| ||B||$
+  \item $||A\bar{x}||_V \leq ||A|| ||B|| ||\bar{x}||_V; \forall A, x \in V$
+\end{enumerate}
+
+Example:
+
+\begin{align*}
+  ||A||_1 = \text{max}_{i \leq j \leq n} \sum_{i=1}^{n} |a_{ij}|,\ 
+  ||A||_\infty = \text{max}_i \sum_{i,j=1}^n |a_{ij}|
+\end{align*}
+
+\subsubsection{Frobenius norm}
+
+Let $nA_n$ of real values. Consider the $O_2(p_2)$ norm. Then:
+
+\begin{align*}
+  ||A\bar{x}||_2 & = \sqrt{\sum_{i=1}^n | \sum_{j=1}^n a_{ij} x_j |^2},\ x \in \mathbb{R}^n \\
+                 & \leq \sqrt{\sum_{i=1}^n ( \sum_{j=1}^n |a_{ij}|^2 ) (\sum_{j=1}^n |x_j|^2)} \\
+                 & \leq \sqrt{\sum_{i=1}^n ( \sum_{j=1}^n |a_{ij}|^2 )} \sqrt{\sum_{j=1}^n |x_j|^2} \\
+                 & = F(A) ||x||_2\text{, where } F(A) = \sqrt{\sum_{i,j} |a_{ij}|^2}
+\end{align*}
+
+Example:
+
+\begin{align*}
+  \begin{bmatrix}
+    1 & 2 & -3 & 0 \\
+    4 & 0 & -1 & 0 \\
+    -2 & 5 & 0 & 0 \\
+    1 & 1 & -2 & 1
+  \end{bmatrix}
+\end{align*}
+
+\begin{align*}
+  ||A||_1 &= max_j \{8, 8, 6, -1\} = 8
+  ||A||_\infty = max_i &= \{6, 5, 7, 5\} = 7
+  ||A||_F &= \sqrt{1 + 4 + 9 + 0 + 16 + 0 + 1 + 0 + 4 + 25 + 0 + 0 + 1 + 1 + 4 + 1} = \sqrt{67} \approx \mathbf{8.18}
+\end{align*}
+
+Given a vector norm, the associated matrix norm (called the \textbf{operator norm}) is given by:
+
+\begin{align*}
+  ||A|| = \text{suprem norm}_{\bar{x} \neq 0} \frac{||A\bar{x}||_V}{||\bar{x}||_V}
+\end{align*}
+
+We must show $||A||_1$ is bounded above and exists.
+
+So, we show that $\text{sup}_{x \neq \emptyset} \frac{||A\bar{x}||_1}{||\bar{X}||_1 \leq c}$, and that $c = max_j \sum_i |a_{ij}|$.
+
+For $\bar{x} \neq \bar{0}$:
+
+\begin{align*}
+  ||A\bar{x}||_1 = \sum_{i=1}^n |\sum_{j=1}^n a_{ij} x_j| \leq \sum_{i=1}^n \sum_{j=1}^n |a_{ij}| |x_j|\text{ by the Triangle Inequality}
+\end{align*}
+
+We can reverse the order of the sum:
+
+\begin{align*}
+  ||A\bar{x}||_1 \leq \sum_{j=1}^n |x_j| \sum_{i=1}^n |a_{ij}| &\leq \sum_{j=1}^n |x_j| \text{max}_j \sum_{i=1}^n |a_{ij}|
+  &\leq ||\bar{x}||_1 \text{max}_j \sum_{i=1}^n |a_{ij}|| = ||\bar{x}||_1 c
+\end{align*}
+
+So, $\frac{||A\bar{X}||_1}{||\bar{x}||_1} \leq c$. Hence, since $\bar{x}$ was chosen arbitrarily, we have boundedness. Furthermore, there exists a value of $k$ such that:
+
+\begin{align*}
+  \text{max}_j \sum_i |a_{ij}| = \sum_i |a_{ik}|
+\end{align*}
+
+If we let $x = e_k$, then $\frac{||A\bar{x}||_1}{||\bar{x}||_1} = \sum_i |a_{ik}| = c$
+
+The operator norm induced by $||\bar{v}||_\infty$ is the \textbf{row-sum norm}, $||A||_\infty$.

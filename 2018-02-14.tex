@@ -5,11 +5,11 @@
 Some points:
 
 \begin{itemize}
-  \item Objects are allocated by a call to \cpp{new} and dellocated by a call to \cpp{delete}.
+  \item Objects are allocated by a call to \cpp{new} and deallocated by a call to \cpp{delete}.
   \item Objects are created as the program needs them.
   \item So, there needs to be no relationship between dynamic memory and variables - known at compile time.
   \item \cpp{new} will invoke the appropriate constructor.
-  \item New arrays of objects requrie a default constructor.
+  \item New arrays of objects require a default constructor.
 \end{itemize}
 
 Upside of dynamic memory: \textbf{flexibility}. Downside: \textbf{memory management}.
@@ -102,11 +102,11 @@ In the middle of telling this story, he told another story of his friends leavin
 
 \subsection{Curves}
 
-Lagrange form = Newtwon form
+Lagrange form or Newton form?
 
-\begin{equation}
+\begin{align*}
   P_N(x) = a_0 + a_1 (x - x_0) + a_2 (x - x_1) (x - x_0) + ... + a_N (x - x_{N-1}) ... (x - x_0)
-\end{equation}
+\end{align*}
 
 Where $a_k = f[x_0, x_1, x_2, ..., x_k]; k = 0, 1, ..., N$
 

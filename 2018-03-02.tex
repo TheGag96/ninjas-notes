@@ -6,7 +6,7 @@
 
 A \textbf{norm} is a way to measure. But we demand certain properties.
 
-\underline{Definition:} Suppose $V$ is a vector sapace. Then $N: V \rightarrow \mathbb{R}$ is a norm if:
+\underline{Definition:} Suppose $V$ is a vector space. Then $N: V \rightarrow \mathbb{R}$ is a norm if:
 
 \begin{enumerate}
   \item $N(\bar{v}) \geq 0; \forall \bar{v} \in V; N(\bar{v}) = 0 \text{ iff } \bar{v} \equiv 0$
@@ -27,13 +27,13 @@ Example - \textbf{p-norms}:
 
 Let $N$ and $M$ be norms on $\mathbb{R}^n$. Then there exist constants $c_1 > 0$ and $c_2 > 0$ such that:
 
-\begin{equation}
+\begin{align*}
   c_1 M(\bar{x}) \leq N(\bar{x}) \leq c_2 M(\bar{x}); \forall \bar{x} \in V = \mathbb{R}^n
-\end{equation}
+\end{align*}
 
 Lemma (continuity of norms):
 
-Let $M(\bar{x})$ be a norm on $\mathbb{R}^n$ Then $M(\bar{x})$ is a continous function of the $x_i; \forall \bar{x} \in \mathbb{R}^n (\bar{x} = <x_1, x_2, ..., x_n>)$
+Let $M(\bar{x})$ be a norm on $\mathbb{R}^n$ Then $M(\bar{x})$ is a continuous function of the $x_i; \forall \bar{x} \in \mathbb{R}^n (\bar{x} = <x_1, x_2, ..., x_n>)$
 
 \subsubsection{A proof}
 
@@ -41,39 +41,39 @@ Show that if $x_i \approx y_i$, then $N(\bar{x}) \approx N(\bar{y})$
 
 We have: $(\bar{x} - \bar{y}) = \sum_{i=1}^{n} (x_i - y_i) e_i$
 
-\begin{equation}
+\begin{align*}
   N(\bar{x} - \bar{y}) = ||\bar{x} - \bar{y}|| \leq \sum_{i=1}^{n} |x_i - y_i| N(e_i) \leq \sum_{i=1}^{n} \text{max}_i |x_i - y_i| N(e_i)
-\end{equation}
+\end{align*}
 
 Now, using The Reverse Triangle Equality:
 
-\begin{equation}
+\begin{align*}
   |N(\bar{x} - N(\bar{y}))| \leq N(\bar{x} - \bar{y}) \leq ||\bar{x} - \bar{y}||_\infty c; c = \sum_i N(e_i)
-\end{equation}
+\end{align*}
 
 Or:
 
-\begin{equation}
+\begin{align*}
   |N(\bar{x} - N(\bar{y}))| \leq c ||\bar{x} - \bar{y}||_\infty
-\end{equation}
+\end{align*}
 
 \subsubsection{Proof of equality of norms}
 
 It is sufficient to show for an arbitrary norm $N$ and a special norm, $||\dot||_infty$. Thus, show $\exists c_1, c_2 > 0$ such that:
 
-\begin{equation}
+\begin{align*}
   c_1 ||\bar{x}||_\infty \leq N(\bar{x}) \leq c_2 ||\bar{x}||_\infty
-\end{equation}
+\end{align*}
 
 From the lemma, if we set $\bar{y} = 0$ we have:
 
 \begin{align*}
-  |N(\bar{x}) - N(\bar{y})  & \leq c_2 ||\bar{x} - \bar{y}||_\infty \\
+  |N(\bar{x}) - N(\bar{y})|  & \leq c_2 ||\bar{x} - \bar{y}||_\infty \\
   N(\bar{x}) = |N(\bar{x})| & \leq c_2 ||\bar{x}||_\infty \\
   N(\bar{x})                & \leq c_2 ||\bar{x}||_\infty
 \end{align*}
 
-So, the upper inequality holds. The lower inequality holds because all asdf are asdf away from 0.
+So, the upper inequality holds. The lower inequality holds because all asdf are asdf away from 0. <Unable to read what Price wrote>
 
 \begin{align*}
   c_1 ||\bar{x}||_\infty &\leq N(\bar{x}) \leq c_2 ||\bar{x}||_\infty \\
@@ -82,8 +82,8 @@ So, the upper inequality holds. The lower inequality holds because all asdf are 
 
 So what?! What does this theorem give us? When trying to determine something like:
 
-\begin{equation}
+\begin{align*}
   \lim_{i \rightarrow \infty} \bar{v}_i \rightarrow \bar{v}\ \Leftrightarrow\ |\bar{v}_i - \bar{v}| \rightarrow 0
-\end{equation}
+\end{align*}
 
-It doesn't matter what norm you use! Any one can be used to proove convergence.
+It doesn't matter what norm you use! Any one can be used to prove convergence.

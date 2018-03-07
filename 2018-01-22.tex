@@ -7,11 +7,11 @@ I sort of think of macros like I do constants.
 \begin{enumerate}
   \item Use the \shellcmd{=} to build a macro (ex. \shellcmd{CXX = /mst/bin/g++}).
   \item Don't use tabs or \shellcmd{:}.
-  \item The convention: use uper case to name a macro.
-  \item To evaluate a macro, use withen \shellcmd{\$\{----\}} or \shellcmd{\$(----)}.
+  \item The convention: use upper case to name a macro.
+  \item To evaluate a macro, use within \shellcmd{\$\{----\}} or \shellcmd{\$(----)}.
   \item For a single-character macro, the \shellcmd{\{\}} or \shellcmd{()} are not necessary.
   \item \shellcmd{BOB =} would assign the empty string to BOB
-  \item Order in definition doesn't matter. However, if your macro defns recursively, then \shellcmd{make} will get "upset".
+  \item Order in definition doesn't matter. However, if your macro defines recursively, then \shellcmd{make} will get "upset".
 \end{enumerate}
 
 \subsection{Internal macros}
@@ -31,10 +31,10 @@ Macros can be used on the command line (ex. \shellcmd{make FLAGS=hello})
 (Order is least to greatest)
 
 \begin{enumerate}
-  \item The default defns of make
+  \item The default definitions of make
   \item current shell environment variables
-  \item description file defns
-  \item command line defns
+  \item description file definitions
+  \item command line definitions
 \end{enumerate}
 
 Note: \shellcmd{make -e} will force \#2 to be dominant except for command line
@@ -57,7 +57,7 @@ How does make work? In Unix, we have conventions. A .c extension signals a C-com
 
 So, suffix rules are either built-in rules or user-defined rules on how to "do something".
 
-Backward chaining is employed to build any prereq of the current target(s). And the re-build is determined by user-defined and automatic/internal suffix rules.
+Backward chaining is employed to build any prerequisite of the current target(s). And the re-build is determined by user-defined and automatic/internal suffix rules.
 
 \begin{itemize}
   \item First looks for specific user-defined rule.
@@ -68,6 +68,6 @@ Then, \shellcmd{make} looks for any file in the current directory that:
 
 \begin{itemize}
   \item has the same root name
-  \item has a signifcant suffix
+  \item has a significant suffix
   \item is required to build the target
 \end{itemize}
