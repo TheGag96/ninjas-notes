@@ -7,8 +7,8 @@
 \underline{Definition:} An \textbf{inner product} on a vector space $V$ is a real-valued function over $V$ with
 
 \begin{enumerate}
-  \item $(\alpha, \alpha) > 0; \forall \alpha \in V$ 
-  \item $(\alpha, \beta) = (\beta, \alpha); \forall \alpha, \beta \in V$ 
+  \item $(\alpha, \alpha) > 0;\ \forall \alpha \in V$ 
+  \item $(\alpha, \beta) = (\beta, \alpha);\ \forall \alpha, \beta \in V$ 
   \item $(\alpha + \beta, \gamma) = (\alpha, \gamma) + (\beta, \gamma)$
   \item $(c\alpha, \beta) = c(\alpha, \beta);$ c a scalar
 \end{enumerate}
@@ -45,9 +45,9 @@ For any $\alpha$ and $\beta$ in $V$, $|\alpha + \beta| \leq |\alpha| + |\beta|$
 \underline{Proof:}
 
 \begin{align*}
-  |\alpha+\beta|^2 = (\alpha+\beta, \alpha+\beta) & = (\alpha+\alpha) + (\beta, \alpha) + (\alpha + \beta) + (\beta, \beta)
-                                                  & = |\alpha|^2 + 2(\alpha, \beta) + |\beta|^2
-                                                  & \leq |\alpha|^2 + 2|\alpha||\beta| + |\beta|^2
+  |\alpha+\beta|^2 = (\alpha+\beta, \alpha+\beta) & = (\alpha, \alpha) + (\beta, \alpha) + (\alpha, \beta) + (\beta, \beta) \\
+                                                  & = |\alpha|^2 + 2(\alpha, \beta) + |\beta|^2 \\
+                                                  & \leq |\alpha|^2 + 2|\alpha||\beta| + |\beta|^2 \\
                                                   & = (|\alpha| + |\beta|)^2
 \end{align*}
 
@@ -100,7 +100,7 @@ Suppose $T = {\alpha_1, \alpha_2, ... \alpha_n}$ is a basis for a vector space. 
   So,
 
   \begin{align*}
-    \therefore \beta_k = \alpha_k - \sum_{h=1}^{k-1} \frac{(\beta_h, \alpha_k)}{(\beta_h, \beta_h)} \beta_h; k = 1, ..., n
+    \therefore \beta_k = \alpha_k - \sum_{h=1}^{k-1} \frac{(\beta_h, \alpha_k)}{(\beta_h, \beta_h)} \beta_h;\ k = 1, ..., n
   \end{align*}
 
   And, an orthogonal basis is obtained by

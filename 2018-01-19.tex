@@ -61,11 +61,11 @@ clean :
 \begin{enumerate}
   \item There must be a tab at the lead or beginning of a command line. You can use the Unix command:
 
-  \begin{lstlisting}[language=make]
-  cat -v -t -e makefile
-  \end{lstlisting}
+\begin{lstlisting}[language=make]
+cat -v -t -e makefile
+\end{lstlisting}
 
-  Will print a \shellcmd{\^I} anywhere there is a tab char, and a \shellcmd{\$} at the end of every line.
+  Will print a \shellcmd{\char`\^I} anywhere there is a tab char, and a \shellcmd{\$} at the end of every line.
 
   "When using Makefiles, you must use tabs to indent. In jpico, when you press tab, it puts something that \textit{looks} like a tab. But it's not a tab. It took me about 3 or 4 hours to figure it out. Jpico is named after a guy named Joe. I looked him up, and he died several years earlier, but I dug him up and killed him again." --Captain Price, 2018
 
