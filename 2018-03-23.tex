@@ -1,0 +1,79 @@
+\section{2018-03-23}
+
+\subsection{Interface bases}
+
+\subsubsection{Reworking GPIBController}
+
+So, we have seen that client code, such as the calibration function can be passed an object of a desire type via a reference or pointer to a base class (parameter). But we can also make an interface base type a member of a class. But, if we do, it as to be as a reference (or pointer) to that type.
+
+Let's generalize the \cpp{GPIBController} to make it an interface - representing any of many types of GPIB controllers.
+
+\begin{lstlisting}[language=C++]
+class GPIBController {
+  public:
+    virtual void insert(/**/) = 0;
+    virtual void send(/**/) = 0;
+    virtual void send(/**/) = 0;
+    virtual float receive() = 0;
+    virtual ~GPIBController();
+};
+\end{lstlisting}
+
+And now, we modify the original GPIBController.
+
+\begin{lstlisting}[language=C++]
+class GPIB : public GPIBController {
+  public:
+    virtual void insert(/**/);
+    virtual void send(/**/);
+    //etc.
+};
+\end{lstlisting}
+
+So, it's the same as before except that it derives from an interface base class. And so now we generalize the \cpp{Acme130} (and \cpp{Volton59}):
+
+\begin{lstlisting}[language=C++]
+class Acme130 : public VoltageSupply, public GPIBInstrument {
+  public:
+    Acme130(GPIBController& controller /* , ... */);
+    //...
+
+  private:
+    GPIBController& myController;
+    //...
+}
+\end{lstlisting}
+
+The constructor initialize the reference data member so that the controller is of any kind of GPIB controller, and we really don't need to know what kind (details) as long as it can be derived from the interface and have its functionality.
+
+\subsubsection{IV tester example}
+
+As another example, we can create an IV tester class.
+
+\begin{lstlisting}[language=C++]
+class IVTester {
+  public:
+    IVTester(VoltageSupply& vs, Voltmeter& vm) : supply(vs), meter(vm) { }
+    float current(/**/);
+
+  private:
+    VoltageSupply& supply;
+    Voltmeter& meter;
+};
+\end{lstlisting}
+
+So, we can create an IVTester object with any combination of voltage supply and meter that we want. 
+
+Now, the question is: is it possible to have an array of these different instruments? Yeah, we create an array of pointers to the interface base type. As long as the objects that the pointers point to have are derived from that base type, we can ``connect'' them. 
+
+\begin{lstlisting}[language=C++]
+class GPIBController_GIS : public GPIBController {
+  public:
+    //...
+
+  private:
+    const SimulatorFactory& simFact;
+    Array<GPIBInstrumentSimulator*> simulator;
+    //...
+};
+\end{lstlisting}

@@ -4,6 +4,8 @@
 
 \subsubsection{Your matrix class}
 
+Here are some options for representing matrix data:
+
 \begin{enumerate}
   \item \ 
 \begin{lstlisting}[language=C++]
@@ -17,20 +19,20 @@
 
   \item \ 
 \begin{lstlisting}[language=C++]
-  myvect<myvect<T>> elem;
-  elm = new myvect<T>[rows];
+  myvect<T>* elem;
+  elem = new myvect<T>[rows];
 \end{lstlisting}
 
   \item \ 
 \begin{lstlisting}[language=C++]
   T* elem;
-  elm = new T[row*col];
+  elem = new T[row*col];
 \end{lstlisting}
 
   \item \ 
 \begin{lstlisting}[language=C++]
   T** elem;
-  elm = new T*[rows];
-  for (i = 0; i < rows; i++) elm[i] = new T[cols];
+  elem = new T*[rows];
+  for (i = 0; i < rows; i++) elem[i] = new T[cols];
 \end{lstlisting}
 \end{enumerate}

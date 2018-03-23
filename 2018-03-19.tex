@@ -1,0 +1,89 @@
+\section{2018-03-19}
+
+\subsection{Commonality of behavior}
+
+\subsubsection{Some motivation}
+
+The greatest utility of a language like C++ is its object-oriented design. One of the principle reasons for a course like this one is to expose the usefulness of its capabilities. Object-oriented programming not only gives us the ability to more closely model reality, but also to produce code that is more adaptable and maintainable.
+
+So far, we've learned about encapsulation. We encapsulate data and functionality into classes. We do this so as to be able to better control \underline{how} objects are used/modified. So now we take the concept of abstraction one level higher. Using inheritance and virtual functions, we will be able to model the idea ``is usable as''. Here then we introduce base classes.
+
+\subsubsection{Our example system}
+
+% GPIBController
+
+\begin{tikzpicture}
+  \begin{class}{GPIBController}{0,0}
+    \operation{insert(char*, int)}
+    \operation{send(int, float)}
+    \operation{send(int, char*)}
+    \operation{receive(int): float}
+  \end{class}
+
+  \begin{class}{Acme130}{6,0}
+    \attribute{myController: GPIBController}
+    \attribute{gpibAddress: int}
+
+    \operation{Acme130(GPIBController\&, int)}
+    \operation{set(float)}
+    \operation{min()}
+    \operation{max()}
+  \end{class}
+
+  \begin{class}{Voltmeter}{0,4}
+    \attribute{controller: GPIBController}
+    \attribute{address: int}
+
+    \operation{Voltmeter()}
+    \operation{read(): float}
+  \end{class}
+  
+  \begin{class}{Somewhere}{6,4}
+    \operation{calibration(Acme130\&...)}
+  \end{class}
+
+  \draw [umlcd style dashed line, ->] (Somewhere) --node[above, sloped, black]{} (Acme130);
+  \draw [umlcd style dashed line, ->] (Voltmeter) --node[above, sloped, black]{} (GPIBController);
+  \draw [umlcd style dashed line, ->] (Acme130) --node[above, sloped, black]{} (GPIBController);
+\end{tikzpicture}
+
+
+In the real world, objects have \underline{state} and \underline{behavior}. State describes at any instant in time what the object ``is''. Behavior describes how it affects other objects and how it is affected by others - how it responds to stimulus. C++ objects have the same descriptors. THey have member variables (state of the object) and member functions (behaviors).
+
+\begin{lstlisting}[language=C++]
+//gpib.h
+class GPIBControler {
+  public:
+    void insert(char* deviceName, int address);
+    void send(int address, char* command);
+    void send(int address, float vValue);
+    float receive(int address);
+}; //notice no state/variables; only behavior
+
+//acme130.h
+class Acme130 {
+  public:
+    Acme130(GPIBController& control, int address);
+    void set(float volts);
+    float min(); float max();
+
+  private:
+    GPIBController myController;
+    int gpibAddress;
+}
+
+//acme130.cpp
+Acme130::Acme13(GPIBController& control, int address) {
+  myController = control;
+  gpibAddress = address;
+  myController.insert("Acme130", gpibAddress);
+}
+\end{lstlisting}
+
+\subsubsection{Encapsulation}
+
+The goal of encapsulation is to hide information. What information? We hide data... in obvious ways/reasons. We also hide implementation of behavior. We hide \underline{how} the functionality is coded. But also by not exposing data structures, and by using general terms. For example, using iterators.
+
+In addition, we can add layers of abstraction using inheritance. For our example, we may want a voltage supply to hook into the GPIB. Do we care what kind it is? Probably not. As long as the object as the functionality we require, we don't care whether it's an Acme130 or a Volton59.
+
+So, we generalize the Acme and Volton voltage supplies to a type of object we will call \cpp{VoltageSupply}. Separating the code that specifies implementation of objects from code that uses the objects and so allows code that uses objects to access \underline{only behavior} (the functions) and not state representation (data structures) gives us code that is adaptable and versatile. So implementation can change while the interface remains the same.

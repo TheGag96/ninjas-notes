@@ -1,0 +1,115 @@
+\section{2018-03-14}
+
+\subsection{Lambdas in C++}
+
+\subsubsection{Syntax}
+
+\begin{lstlisting}[language=C++]
+auto func = []() -> int { /* body */ };
+\end{lstlisting}
+
+\begin{itemize}
+  \item \cpp{auto} - required (can't name the actual type!)
+  \item \cpp{func} - name of variable (obviously)
+  \item \cpp{[]} - capture clause
+  \item \cpp{()} - parameters
+  \item \cpp{-> int} - return type (optional)
+  \item \cpp{\{ /* body */ \}} - body of function
+\end{itemize}
+
+Capture clause types:
+
+\begin{itemize}
+  \item \cpp{[]} - capture nothing
+  \item \cpp{[=]} - capture by value; makes a copy which is const
+  \item \cpp{[&]} - capture by reference
+  \item \cpp{[this]} - captures the calling object
+\end{itemize}
+
+\subsubsection{Basic usage examples}
+
+Capture by value:
+
+\begin{lstlisting}[language=C++]
+auto add5 = [](int x) {
+  return 5 + x;
+}
+
+int amt;
+cout << "stuff here";
+cin >> amt;
+
+auto addSome = [=](int x) {
+  return x + amt;
+}
+
+addSome(3); //5
+\end{lstlisting}
+
+Capture multiple variables by reference:
+
+\begin{lstlisting}[language=C++]
+auto add5 = [](int x) {
+  return 5 + x;
+}
+
+template <class Func> 
+void callWith5(Func f) {
+  f(5);
+}
+
+int amt = 3;
+int calls = 0;
+
+auto addAndCount = [amt, &calls](int x) {
+  calls++;
+  return x + amt;
+}
+
+callWith5(addAndCount);
+cout << calls;
+\end{lstlisting}
+
+\subsubsection{The advantage}
+
+Lambdas can simplify a lot. Compare a lambda solution with an equivalent functor class to do the same thing:
+
+\begin{lstlisting}[language=C++]
+//lambda
+[=](Vector<float> v) {
+  return v * scalar;
+}
+
+//functor class
+class MS {
+  private:
+    float theScalar;
+
+  public:
+    MS(float scalar) : theScalar(scalar) { }
+    Vector<float> operator()(Vector<float> v) {
+      return v * theScalar;
+    }
+}
+\end{lstlisting}
+
+So much shorter!
+
+\subsubsection{Passing ``callables'' to functions}
+
+What is a callable?
+
+\begin{itemize}
+  \item function pointers
+  \item functor classes (\cpp{operator()})
+  \item lambdas
+\end{itemize}
+
+To pass a callable to a function, use a template to catch all of these types:
+
+\begin{lstlisting}[language=C++]
+template <class Func>
+callWith3(Func f) {
+  f(3);
+}
+\end{lstlisting}

@@ -1,0 +1,129 @@
+\section{2018-03-21}
+
+\subsection{Adding to the system}
+
+\subsubsection{A continuation}
+
+To our system, we add two components - First, a meter for testing voltages:
+
+\begin{lstlisting}[language=C++]
+class Voltmeter {
+  public:
+    Voltmeter(GBIPController& control, int address);
+    float read() { return myController.receive(address); }
+
+  private:
+    GPIBController myController;
+    int myAddress;
+};
+\end{lstlisting}
+
+And we add a function called \cpp{calibrate()} which is used to calibrate a voltage supply:
+
+\begin{lstlisting}[language=C++]
+float calibrate(Acme130& supply, Voltmeter& meter, float testVoltage) {
+  supply.set(testVoltage);
+  return abs(testVoltage - meter.read()...);
+}
+\end{lstlisting} 
+
+So, we put this system together and it all works fine. But, what happens when our Acme130 blows up and is no longer usable? Well, in the real world, we walk down the hall and borrow a Volton59 from Larry. So, it works; it is plug-adaptable... Except, in our model, it just isn't.
+
+The code requires an Acme130. So, what... change the code. The problem is that we can go on changing code forever. So, we're going to think ``globally''. We're not going to code for specifics, but for categories.
+
+We now make our first base class:
+
+\begin{lstlisting}[language=C++]
+class VoltageSupply {
+  public:
+    virtual void set(float volts) = 0;
+    virtual float min() const     = 0;
+    virtual float max() const     = 0;
+    virtual ~VoltageSupply() { };
+};
+\end{lstlisting}
+
+The functions ending in \cpp{= 0} are \underline{pure virtual functions}. No instances of any class containing pure virtual functions can be created. This class is what we call an \underline{interface base class} (or \underline{interface base}). Usually, interface bases contain pure virtual functions and no state (variables). The term ``interface base'' is a design term, not a C++ term. the idea is to put common behavior in an interface. We now have to change the \cpp{calibrate()} function. But, then also, we change the \cpp{Acme130} and \cpp{Volton59}.
+
+\begin{lstlisting}[language=C++]
+class Acme130 : public VoltageSupply {
+  public:
+    Acme130(GPIBController& control, int address);
+    virtual void set(float volts);
+    virtual float min() const;
+    virtual float max() const;
+
+  private:
+    GPIBController myController;
+    int gpibAddress;
+};
+\end{lstlisting}
+
+So, the \cpp{Acme130} ``is usable as'' a \cpp{VoltageSupply}. Likewise the \cpp{Volton59} ``is usable as'' a VoltageSupply. 
+
+Note: the designation of public derivation means that instances of this desired class can be used through references and pointers to the base class.
+
+\begin{itemize}
+  \item The \underline{virtual} designation in the derived class is not required, but is convention (to make it clear). 
+  \item All aspects of the function signature in the derived class(es) should be the same as in the base.
+  \item Interface base classes don't have connections.
+  \item Interface bases don't have state variables.
+  \item An \underline{interface base} has no data. An \underline{abstract base} has \underline{pure virtual} functions.
+  \item You should use abstract bases as your interfaces in function parameters. This is because you are forcing the compiler too flag any undefined functions in a derived class that aren't defined.
+\end{itemize}
+
+\subsection{Multiple bases}
+
+Classes can be derived from more than on base. Let's consider writing a second interface base class. We'll create a base class for the category of any GPIB type device/instrument.
+
+\begin{lstlisting}[language=C++]
+class GPIBInstrument {
+  public:
+    virtual void send(char*) = 0;
+    virtual void send(float) = 0;
+    virtual float receive() = 0;
+    virtual ~GPIBInstrument() {};
+};
+\end{lstlisting}
+
+This is an interface for a generalized GPIB instrument. So, the \cpp{Acme130} and \cpp{Volton59} are both of this type.
+
+\begin{lstlisting}[language=C++]
+class Acme130 : public VoltageSupply, public GPIBInstrument {
+  public:
+    Acme130(/* ... */);
+
+    //VoltageSupply interface
+    virtual void set(float volts);
+    //...
+
+    //GPIBInstrument interface
+    virtual void send(char* s);
+    virtual void send(float f);
+    virtual float receive();
+    //..
+
+  private:
+    //...
+};
+\end{lstlisting}
+
+\begin{tikzpicture}
+  \begin{class}{GPIBInstrument}{6, 4}
+  \end{class}
+
+  \begin{class}{VoltageSupply}{0, 4}
+  \end{class}
+  
+  \begin{class}{Volton59}{0, 0}
+  \end{class}
+  
+  \begin{class}{Acme130}{6, 0}
+  \end{class}
+
+  % why does this package suck so hard?
+  \draw [umlcd style dashed line, -|>] (Acme130) --node[above, sloped, black]{} (GPIBInstrument);
+  \draw [umlcd style dashed line, -|>] (Acme130) --node[above, sloped, black]{} (VoltageSupply);
+  \draw [umlcd style dashed line, -|>] (Volton59) --node[above, sloped, black]{} (GPIBInstrument);
+  \draw [umlcd style dashed line, -|>] (Volton59) --node[above, sloped, black]{} (VoltageSupply);
+\end{tikzpicture}
