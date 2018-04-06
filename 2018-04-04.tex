@@ -1,0 +1,105 @@
+\section{2018-04-04}
+
+\subsection{What about interfaces and extensions by inheritance?}
+
+\subsubsection{The Acme Corporation's new voltage supply}
+
+The Acme Corporation introduces their new voltage supply, the Acme140, which behaves a lot like the Acme130, but... different.
+
+\begin{lstlisting}[language=C++]
+class Acme140 : pubilc Acme130 {
+  public:
+    enum Jumper { J1, J2 }
+    Acme140(GPIBController& controller, int address, Jumper j);
+    virtual float max();
+
+  private:
+    float maxVolts;
+};
+\end{lstlisting}
+
+So, the 140 inherits everything from the 130 but also allows for a jumper value to determine its max voltage. Thus, the Acme140 ``is usable as'' an \cpp{Acme130}, a \cpp{VoltageSupply}, and a \cpp{GPIBInstrument}. But note that the \cpp{Acme130} is an implementation base and \underline{not} an interface base. So, we have to have a constructor for the 140:
+
+\begin{lstlisting}[language=C++]
+Acme140::Acme140(GPIBController& controller, int address, Jumper j) : Acme130(controller, address),
+                                                                      maxVolts(j == J1 ? 10 : 50) { }
+\end{lstlisting}
+
+So, have here it calls the 130's base initializer, and then initializes is own member variable.
+
+We also have to provide a new \cpp{max()} function for the 140 so that \cpp{Acme140} objects can indeed behave like \cpp{Acme130} objects.
+
+\begin{lstlisting}[language=C++]
+float Acme140::max() {
+  return maxVolts;
+}
+\end{lstlisting}
+
+Derived class defined virtual functions \underline{override} the base class definitions.
+
+\begin{lstlisting}[language=C++]
+Acme140 supply(gpib, 16, Acme140::J2);
+cout << supply.max(); //50
+Acme130& as130 = supply;
+cout << as130.max(); //still 50
+VoltageSupply& asVS = supply;
+cout << asVs.max(); //still 50
+\end{lstlisting}
+
+Why? Because the \cpp{max()} function is marked virtual. We get true object-oriented behavior.
+
+
+\subsubsection{Continuing the example}
+
+\begin{lstlisting}[language=C++]
+void Acme130::set(float v) {
+  if (v > max() || v < min()) throw hissyfit;
+  send(v);
+}
+\end{lstlisting}
+
+Since the \cpp{Acme140} derives from the \cpp{Acme130} and \cpp{max()} is virtual, then the correct \cpp{max()} is called - that for the 140 rather than the 130. So:
+
+\begin{lstlisting}[language=C++]
+supply.set(20); //works
+as130.set(20); //yes! works
+Acme 140 s(gpib, 1, Acme140::J1);
+s.set(20); //NO, error!...
+\end{lstlisting}
+
+\subsubsection{Problems that result from public inheritance}
+
+\begin{enumerate}
+  \item Public inheritance exposes implementation - an implementation decision
+
+  Recall: you should hide implementation (decisions). If client code exploits that decision, then change will hurt. If you decide to change how you implement, then clients have to change also.
+
+  \item We have forced the use of virtual functions, even though that is what gives us the true OO behavior. If the virtual function \cpp{max()} was not virtual, then the \cpp{max()} invoked would be determined by the reference it was used through.
+
+\end{enumerate}
+
+So, if \cpp{max()} was not virtual, then calling it for a 140 ``as a'' 130 would result in an incorrect value. Virtual function overhead is expensive. But extension by inheritance requires us to use them. Thus, avoid new definitions of functions in derived classes if they are non-virtual. And so, public inheritance suggests that we declare base class functions virtual unless there's a \underline{good} reason not to:
+
+\begin{enumerate}
+  \item When making a concrete class (for a specific purpose - unlikely to be extended). Then you save on the virtual function overhead.
+  \item Sometimes, you simply want consistency from parent to child.
+\end{enumerate}
+
+Consider:
+
+\begin{lstlisting}[language=C++]
+void printMax(Acme130 a) {
+  cout << "Max voltage is " << a.max();
+}
+\end{lstlisting}
+
+And, \cpp{supply1} and \cpp{supply2} both of type \cpp{Acme140} with \cpp{supply1} having max of 50, and \cpp{supply2} max 10:
+
+\begin{lstlisting}[language=C++]
+printMax(supply1); //10
+printMax(supply2); //10 - bit of a problem, huh?
+\end{lstlisting}
+
+This is because the parameter to the function is \underline{NOT} a reference. And because it's not a reference, a copy is made of the base subobject and that parameter is treated like a \cpp{Acme130}, not an \cpp{Acme140}. The \cpp{Acme130} is both implementation and interface base. So, the compiler can't catch the mistake!
+
+The lesson is: Use references to base classes to have the compiler help you stay on the ``straight and narrow'' path to C++ salvation.

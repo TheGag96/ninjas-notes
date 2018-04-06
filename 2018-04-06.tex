@@ -1,0 +1,104 @@
+\section{2018-04-06}
+
+\subsection{Member function forwarding}
+
+\subsubsection{More Acme130}
+
+\begin{lstlisting}[language=C++]
+class Acme130 : public VoltageSupply, public GPIBInstrument {
+  public:
+    Acme130(GPIBController& c, int address);
+
+    //VS interface
+    //...
+
+    //GPIBInstrument interface
+    virtual void send(/* ... */);
+    virtual void send (/* ... */);
+    virtual float receive();
+
+  private:
+    GPIBController& myController;
+    int myAddress; 
+};
+\end{lstlisting}
+
+Well, the \cpp{Volton59} looks just like... also derives from GPIBInstrument. Likewise, the VoltyMetric class derives from \cpp{GPIBInstrument}. All these derive from \cpp{GPIBInstrument} and use the same functions and data. We can avoid all this replication by placing it all in another class and employing \underline{function forwarding}. 
+
+
+\begin{lstlisting}[language=C++]
+class GPIBInstrumentData {
+  public:
+    GPIBInstrumentData(GPIBController& c, int address, const char* name);
+
+    //Instrument interface
+    void send(const char*);
+    void send(float f);
+    float receive();
+
+  private:
+    GPIBController& myController;
+    int myAddress;
+};
+\end{lstlisting}
+
+Note: It is structurally the same as the \cpp{Acme130}, \cpp{Volton59}, and \cpp{VoltyMetric}, but not like the interface bases. The function implementations are the same as was in the \cpp{Acme130}, \cpp{Volton59}, and \cpp{VoltyMetric}, but here we now have just one version. 
+
+\begin{lstlisting}[language=C++]
+void GPIBInstrumentData::send(float val) {
+  myController.send(myAddress, val);
+}
+\end{lstlisting}
+
+The constructor is going to initialize the data and it inserts the device onto the controller. But, since it isn't for a particular device, it has to have a third parameter and that's the name of the device.
+
+\begin{lstlisting}[language=C++]
+GPIBInstrumentData::GPIBInstrumentData(GPIBController& c, int address, const char* name) 
+  : myController(c), myAddress(address) {
+  myController.insert(name, address);
+}
+
+class Acme130 : public VoltageSupply, public GPIBInstrument {
+  private:
+    GPIBInstrumentData gpibRep;
+
+  public:
+    Acme130(GPIBController& controller, int address) : gpibRep(controller, address, "Acme130") { }
+
+    //VS interface
+    //...
+
+    //Instrument interface
+    virtual void send(/* ... */) { gpibRep.send(/* ... */); }   
+    virtual void send(/* ... */) { gpibRep.send(/* ... */); }
+    virtual float receive(/* ... */) { return gpibRep.receive(); }
+};
+
+//repeated for Volton59 and VoltyMetric
+\end{lstlisting}
+
+\subsubsection{A new UML diagram}
+
+\begin{tikzpicture}
+  \begin{class}{GPIBInstrument}{6, 8}
+  \end{class}
+
+  \begin{class}{VoltyMetrics}{12, 4}
+    \inherit{GPIBInstrument}
+  \end{class}
+  
+  \begin{class}{Volton59}{6, 4}
+    \inherit{GPIBInstrument}
+  \end{class}
+  
+  \begin{class}{Acme130}{0, 4}
+    \inherit{GPIBInstrument}
+  \end{class}
+
+  \begin{class}{GPIBInstrumentData}{6, 0}
+  \end{class}
+
+  \unidirectionalAssociation{Acme130}{}{}{GPIBInstrumentData}
+  \unidirectionalAssociation{Volton59}{}{}{GPIBInstrumentData}
+  \unidirectionalAssociation{VoltyMetrics}{}{}{GPIBInstrumentData}
+\end{tikzpicture}
