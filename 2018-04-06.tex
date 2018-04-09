@@ -25,7 +25,6 @@ class Acme130 : public VoltageSupply, public GPIBInstrument {
 
 Well, the \cpp{Volton59} looks just like... also derives from GPIBInstrument. Likewise, the VoltyMetric class derives from \cpp{GPIBInstrument}. All these derive from \cpp{GPIBInstrument} and use the same functions and data. We can avoid all this replication by placing it all in another class and employing \underline{function forwarding}. 
 
-
 \begin{lstlisting}[language=C++]
 class GPIBInstrumentData {
   public:

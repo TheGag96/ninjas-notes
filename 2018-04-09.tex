@@ -1,0 +1,102 @@
+\section{2018-04-09}
+
+\subsection{Implementation using inheritance}
+
+\subsubsection{Reworking GPIBInstrumentData}
+
+We now use inheritance/derivation to accomplish what we set out to do with function forwarding.First, change the \cpp{GPIBInstrumentData} to be derived from \cpp{GPIBInstrument} so that it implements our interface.
+
+\begin{lstlisting}[language=C++]
+class GPIBInstrumentData : public virtual GPIBInstrument {
+  public:
+    GPIBInstrumentData(GPIBController& c, int address, const char* name);
+    
+    //GPIB interface
+    virtual void send(/* ... */);
+    virtual void send(/* ... */);
+    virtual float receive();
+
+  private:
+    GPIBController& myController;
+    int myAddress;
+};
+\end{lstlisting}
+
+So, the \cpp{GPIBInstrumentData} ``is usable as'' a \cpp{GPIBInstrument}. The \cpp{GPIBInstrument} is a ``virtual base''. The implementations of the functions remain the same. Now, we rewrite the \cpp{Acme130}.
+
+\begin{lstlisting}[language=C++]
+class Acme130 : public virtual VoltageSupply, public virtual GPIBInstrument, private GPIBInstrumentData {
+  public:
+    Acme130(/* .. */);
+
+    //VoltageSupply interface
+    virtual void set(/* ... */);
+    virtual float min();
+    virtual float max();
+};
+\end{lstlisting}
+
+Note:
+
+\begin{itemize}
+  \item The virtual derivations from base classes
+  \item The private derivation from the implementation base
+  \item Any instance of an \cpp{Acme130} contains a base subobject of the base
+  \item Because of the private derivation, it is NOT ``usable as'' a \cpp{GPIBInstrumentData} object
+  \item The private derivation ``hides'' the implementation of this class
+\end{itemize}
+
+Notice, the \cpp{Acme130} does \underline{not} implement the instrument interface functions. THose are privately inherited from the \cpp{GPIBInstrumentData}. Public access of the member functions is blocked. Clients have to access the functionality through that interface. They have to access through the \underline{same} interface base as the \cpp{GPIBInstrumentData}. And this is the reason for the virtual derivation. Function calls are routed through the implementation base.
+
+\begin{tikzpicture}
+  \begin{class}{GPIBInstrument}{8, 4}
+  \end{class}
+
+  \begin{class}{VoltageSupply}{0, 4}
+  \end{class}
+  
+  \begin{class}{Acme130}{0, 0}
+  \end{class}
+  
+  \begin{class}{GPIBInstrumentData}{8, 2}
+  \end{class}
+
+  % why does this package suck so hard?
+  \draw [umlcd style dashed line, -|>] (Acme130) --node[above, sloped, black]{} (GPIBInstrument);
+  \draw [umlcd style dashed line, -|>] (Acme130) --node[above, sloped, black]{} (VoltageSupply);
+  \draw [umlcd style dashed line, -|>] (Acme130) --node[above, sloped, black]{private} (GPIBInstrumentData);
+  \draw [umlcd style dashed line, -|>] (GPIBInstrumentData) --node[above, sloped, black]{} (GPIBInstrument);
+\end{tikzpicture}
+
+
+\subsubsection{}
+
+Here's some example code that doesn't work:
+
+\begin{lstlisting}[language=C++]
+Acme130 s(gpib, 4);
+s.send(10);
+\end{lstlisting}
+
+We can't do this. The private derivation prohibits it. What we can do is:
+
+\begin{lstlisting}[language=C++]
+GPIBInstrument* g = new Acme130(gpib, 4);
+g->send(10);
+//or
+GPIBInstrument& t = *g;
+t.send(10);
+\end{lstlisting}
+
+
+The whole idea is that you use the functionality of the particular deices through the interface. You can also ``override'' the privateness inherited from that implementation base by declaring something public:
+
+\begin{lstlisting}[language=C++]
+class Acme130 : public virtual VoltageSupply, public virtual GPIBInstrument, private GPIBInstrumentData {
+  public:
+    GPIBInstrumentData::send; //publicly expose GPIBID's inherited send function
+    //...
+};
+\end{lstlisting}
+
+Thus, all the code in the example will work (even the one that didn't before!).
