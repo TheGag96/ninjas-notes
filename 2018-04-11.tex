@@ -1,0 +1,107 @@
+\section{2018-04-11}
+
+\subsection{Names}
+
+\subsubsection{Defining names}
+
+Inheritance works because the compiler resolves names. A name is an identifier with a meaning. A name as 3 attributes that we will look at now: \underline{scope}, \underline{dominance}, and \underline{accessibility}. Resolving these will determine how the name works.
+
+We declare a name. Its \underline{scope} is determined by how it is nested in classes, functions, and blocks of code. Where it \underline{dominates} or is dominated by other names with the same identifier will be determined by its relationship of its class with these classes in a directed acyclic graph (DAG). And of course, \underline{accessibility} is determined by the designation as \cpp{public}, \cpp{private}, or \cpp{protected}.
+
+Identifiers must resolve to the present scope. 
+
+\begin{lstlisting}[language=C++]
+class Acme230 : public virtual VoltageSupply, public virtual GPIBInstrument,
+                private Acme130 {
+  public:
+    Acme230(/* ... */);
+    virtual float max();
+    virtual void set(float v);
+    enum Range { low, high };
+    virtual void set(Range r);
+
+  private:
+    Range setting;
+};
+\end{lstlisting}
+
+\begin{tikzpicture}
+  \begin{class}{GPIBInstrument}{8, 4}
+  \end{class}
+
+  \begin{class}{VoltageSupply}{0, 4}
+  \end{class}
+  
+  \begin{class}{Acme130}{0, -1}
+  \end{class}
+  
+  \begin{class}{GPIBInstrumentData}{8, 2}
+  \end{class}
+
+  \begin{class}{Acme230}{-4, 2}
+  \end{class}
+  
+  \draw [umlcd style dashed line, -|>] (Acme130) --node[above, sloped, black]{} (GPIBInstrument);
+  \draw [umlcd style dashed line, -|>] (Acme130) --node[above, sloped, black]{} (VoltageSupply);
+  \draw [umlcd style dashed line, -|>] (Acme130) --node[above, sloped, black]{private} (GPIBInstrumentData);
+  \draw [umlcd style dashed line, -|>] (GPIBInstrumentData) --node[above, sloped, black]{} (GPIBInstrument);
+  \draw [umlcd style dashed line, -|>] (Acme230) --node[above, sloped, black]{} (GPIBInstrument);
+  \draw [umlcd style dashed line, -|>] (Acme230) --node[above, sloped, black]{} (VoltageSupply);
+  \draw [umlcd style dashed line, -|>] (Acme230) --node[above, sloped, black]{private} (Acme130);
+\end{tikzpicture}
+
+\subsubsection{A story}
+
+``I have a twin sister. God, she's ugly - she looks just like me. ... When my mother was informed she was having twins, she was going to name us Hiram and Lowis, so that she could call us `Hi Price' and `Lo Price'. Thank God she didn't do that.''
+
+\subsubsection{Scoping and names}
+
+\begin{itemize}
+  \item Private derivation from an implementation base - \cpp{Acme130}; and public virtual derivation from its \cpp{VoltageSupply} and \cpp{GPIBInstrument} bases
+  \item introduces new names: high and low
+  \item introduces a new set functionality (for range value)
+  \item redeclare the other (old) set function and \cpp{max()}
+\end{itemize}
+
+\begin{lstlisting}[language=C++]
+float Acme230::max() {
+  if (setting == high) return 100;
+  return 10;
+}
+\end{lstlisting}
+
+Here, the names \cpp{high} and \cpp{low} must be scoped because outside the \cpp{Acme230} class, they have no meaning.
+
+\begin{lstlisting}[language=C++]
+Acme230 s(gpib, 1);
+s.set(Acme230::high);
+\end{lstlisting}
+
+Derived classes' scope will include the scopes of all base classes. So, all names in the \cpp{VoltageSupply}, \cpp{GPIBInstrument}, and \cpp{Acme130} bases are in the \cpp{Acme230}'s scope. Names are inherited. It operates much like block scope.
+
+A name declared in an inner block \underline{hides} the name (with same identifier) in an outer block. Let's look at \cpp{max()}. The \cpp{Acme230} inherits max from the \cpp{Acme130}. But redeclaring it in the \cpp{Acme230} \underline{hides} the \cpp{Acme130}'s meaning. \cpp{min()} is inherited, but it's not hidden. Now, if the name of a virtual function is redeclared in the derived class and matches in the number and types of parameters, then the base class name is \underline{hidden} and \underline{overridden}. If the number and types of parameters don't match, then \underline{only} hiding takes place, and you're likely to get a compiler warning... generally not a good idea.
+
+Note: Name hiding occurs before and independently of function overloading. Thus, we declare:
+
+\begin{lstlisting}[language=C++]
+void Acme230::set(float v) {
+  Acme130::set(v);
+}
+\end{lstlisting}
+
+\subsubsection{Dominance and names}
+
+The problem: suppose that our class has two bases and inherits from both the same name. Which one applies? For multiple bases, this is a matter of ``dominance''. For a single base, this is a matter of ``hiding''.
+
+A name declared in a derived class will \underline{dominate} the same name in any base class. As an example, \cpp{min()} is declared in the \cpp{Acme130}, so it dominates the \cpp{min()} in \cpp{VoltageSupply}. Now, consider the \cpp{Acme230} which derives from both the \cpp{Acme130} and the \cpp{VoltageSupply}. So which \cpp{min()} applies?? It's the \cpp{Acme130}'s \cpp{min()}. Why? Because, the name that dominates in any DAG will be the one that dominates in that sub-DAG. If a name dominates in a two-class DAG, it will dominate any DAG that contains it.
+
+% \begin{tikzpicture}
+%   \begin{class}{A}{8, 4}
+%   \end{class}
+%   \begin{class}{B}{8, 4}
+%   \end{class}
+%   \begin{class}{C}{8, 4}
+%     \inherit{A}
+%     \inherit{B}
+%   \end{class}  
+% \end{tikzpicture}

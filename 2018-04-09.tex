@@ -92,7 +92,8 @@ t.send(10);
 The whole idea is that you use the functionality of the particular deices through the interface. You can also ``override'' the privateness inherited from that implementation base by declaring something public:
 
 \begin{lstlisting}[language=C++]
-class Acme130 : public virtual VoltageSupply, public virtual GPIBInstrument, private GPIBInstrumentData {
+class Acme130 : public virtual VoltageSupply, public virtual GPIBInstrument,
+                private GPIBInstrumentData {
   public:
     GPIBInstrumentData::send; //publicly expose GPIBID's inherited send function
     //...
