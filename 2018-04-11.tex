@@ -58,9 +58,9 @@ class Acme230 : public virtual VoltageSupply, public virtual GPIBInstrument,
 
 \begin{itemize}
   \item Private derivation from an implementation base - \cpp{Acme130}; and public virtual derivation from its \cpp{VoltageSupply} and \cpp{GPIBInstrument} bases
-  \item introduces new names: high and low
+  \item introduces new names: \cpp{high} and \cpp{low}
   \item introduces a new set functionality (for range value)
-  \item redeclare the other (old) set function and \cpp{max()}
+  \item redeclare the other (old) \cpp{set()} function and \cpp{max()}
 \end{itemize}
 
 \begin{lstlisting}[language=C++]
