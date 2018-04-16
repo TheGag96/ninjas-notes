@@ -1,0 +1,72 @@
+\section{2018-04-16}
+
+\subsection{The lost assignment - final project}
+
+\subsubsection{}
+
+In most scientific investigations (that are worth a darn) you model reality using partial differential equations (PDEs). So, why? In most studies, you have many variables controlling the system. To model with only one variable is really unrealistic.
+
+A PDE can be characterized as:
+
+An equation relating one or more dependent variables to two or more independent variables and their derivatives of any order with respect to those independent variables. 
+
+Remember how to do partial derivatives of two variables:
+
+\begin{align*}
+  z = f(x, y)                                                                                              & = x^2y + y - 2xe^y \\
+  \frac{\partial z}{\partial x} = \frac{\partial f}{\partial x}                                            & = 2xy - 2e^y \\
+  \frac{\partial f}{\partial y}                                                                            & = x^2 + 1 - 2xe^y \\
+  \frac{\partial ^2 f}{\partial y\partial x} = \frac{\partial }{\partial x}(\frac{\partial f}{\partial y}) & = 2x - 2e^y
+\end{align*}
+
+Great. Now, here's some equations:
+
+\begin{align*}
+  &\frac{\partial^2 u}{\partial x^2} + \frac{\partial ^2 u}{\partial y^2} = f(x, y)    &(x, y) \in \Omega \in \mathbb{R}^2 = \mathbb{R}^\prime  * \mathbb{R}^\prime \\
+  &\frac{\partial u}{\partial t} = a \frac{\partial u}{\partial x^2} + f(x, z)          &x \in (0, L) \in \mathbb{R}^\prime ; t > 0 \\
+  &\frac{\partial ^2 u}{\partial t^2} = a \frac{\partial ^2 u}{dx^2} + f(x, yz) &x \in (0, L) ; t > 0 
+\end{align*}
+
+These are Poisson's equation, the Heat equation, and the Wave equation. In the first case, $f trip 0$, then we call it Laplace's equation. 
+
+What is a solution to a PDE? We're looking for  any function of the required number of independent variables that satisfies the PDE. Solving PDEs is really really... really hard.
+
+We will solve the ``Dirichlet problem'' for Poisson's equation. This means that we know the solution to the PDE on the boundary of the domain.
+
+\begin{align*}
+  &u_{xx} + u_{yy} = g(x, y) &\text{for }(x, y) \in \Omega \\
+  &\text{with } u(x, y) = f(x, y) \text{ on boundary of } \Omega 
+\end{align*}
+
+To make this problem tractable, let's assume that the domain, $\Omega$, is the unit square of $0 \leq x \leq 1$, $0 \leq y \leq 1$. Let's take $N > 0$ to be the number of partitions of both dimensions with $h = 1/N$.
+
+\begin{align*}
+  N > 0, N = 4 \\
+  \text{So, } (x_j, y_k) = (jh, kh) \\
+  0 \leq j, k \leq N
+\end{align*}
+
+If we assume that the function we seek is $C^4(\Omega)$ and then we'll see the \underline{$O(h^2)$ centered difference formula} for the approximation to the 2nd derivative of the function, we can use the following derivation for our solution:
+
+\begin{align*}
+  G^{\prime\prime}(x) = \frac{G(x+h) - 2 G(x) + G(x-h)}{h^2} - \frac{h^2}{12} G^{(4)}(\eta)
+\end{align*}
+
+$\eta$ is necessarily unknown.
+
+If we use this approximation to the 2nd derivative in our PDE in both directions, we got:
+
+\begin{align*}
+  \frac{u(x_{j+1}, y_k) - 2 u(x_j, y_k) + u(x_{j-1}, y_k)}{h^2} + \frac{u(x_j, y_{k+1}) - 2 u(x_j, y_k) + u(x_j, y_{k-1})}{h^2} \\
+  = g(x_j, y_k) - \frac{h^2}{12} (\frac{\partial^4 u}{\partial y^4}(\zeta, \eta))
+\end{align*}
+
+Let $u_h(x_j, y_k) = f(x, y)$ on the boundary of $\Omega$. Dropping the approximating term on the right-hand side, we have an approximation for the solution, $u(x, y)$ on the interior of $\Omega$.
+
+After simplification:
+
+\begin{align*}
+  u_h(x_j, y_k) = \frac{1}{4} ( u_h(x_{j+1}, y_k) + u_h(x_{j-1}{y_k}) + u_h(x_j, y_{k-1}) + u_h(x_j, y_{k+1}) ) - \frac{h^2}{4} g(x_j, y_k)
+\end{align*}
+
+This equation gives us $(N-1)^2$ equations in $(N-1)^2$ unknowns.
