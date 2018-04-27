@@ -1,0 +1,89 @@
+%
+%  notes.tex
+%  Desktop
+%
+%  Created by Illya Starikov on 04/18/18.
+%  Copyright 2018. Illya Starikov. All rights reserved.
+%
+
+\section{2018-04-18}
+
+\subsection{Curiously Recurring Template Pattern}
+
+\subsubsection{Definition}
+
+This is also known as the Barton-Nackman Trick.
+
+Some applications of the Curiously Recurring Template Pattern:
+
+\begin{itemize}
+  \item Static Polymorphism
+  \begin{itemize}
+    \item No Virtual Table
+    \item Objects use less RAM
+    \item Function Call Much Faster
+  \end{itemize}
+\end{itemize}
+
+However, some cons include:
+
+\begin{itemize}
+  \item More complex
+  \item Results in bigger executable
+  \item Have to know the types at compile time
+  \begin{itemize}
+    \item For example, \cpp{Vector<AbsMatrix&>} won't work
+  \end{itemize}
+\end{itemize}
+
+Also, mixins!
+
+\begin{itemize}
+  \item Provide common implementation of features
+\end{itemize}
+
+\subsubsection{Implementation}
+Our interface looks like:
+
+\begin{lstlisting}[language=C++]
+template <class Derived>
+class Base {
+  public:
+    int foo() {
+      return asDerived.foo();
+    }
+
+    Derived& asDerived {
+      return static_cast<Derived&>(*this);
+    }
+};
+
+class Seven : public Base<Seven> {
+  public:
+    int foo() {
+      return 6;
+    }
+};
+
+Seven five;
+five.foo(); // works fine
+
+Base<Seven> five;
+five.foo(); // also works fine
+\end{lstlisting}
+
+So, say we want to use this elsewhere
+
+\begin{lstlisting}[language=C++]
+template <class Derived>
+void printFoo(Base<Derived> b) {
+  std::cout << b.foo() << "\n";
+}
+
+Base<Seven> s;
+Base<Eleven> e;
+
+printFoo(s);
+printFoo(e);
+\end{lstlisting}
+

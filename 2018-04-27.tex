@@ -1,0 +1,117 @@
+\section{2018-04-27}
+
+\subsection{Traits classes}
+
+\subsubsection{A short motivation}
+
+With traits classes you can create a mapping of type names that can be very useful. Some examples:
+
+
+\subsubsection{Example 1}
+
+Suppose that you are writing pieces of a code library that is templatable on numeric types such as floats, doubles, long doubles, etc. Each type has a set of constants associated with it: a max exponent value, an ``epsilon'', a max mantissa size, etc. - all defined in some header file (somewhere). The confusion occurs when, often templating on a specific type, you need \cpp{FLT_MAX_EXP}, \cpp{DBL_MAX_EXP}, etc. The compiler needs a way to determine which you want. Here's the traits solution to the problem:
+
+\begin{lstlisting}[language=C++]
+template <class numT>
+struct float_traits { };
+
+struct float_traits<float> {
+  typedef float float_type;
+  enum {max_exponent = FLT_MAX_EXP};
+  static inline float_type epsilon() { return FLT_EPSILON; }
+  //...
+};
+
+struct float_traits<double> {
+  typedef double float_type;
+  enum {max_exponent = DBL_MAX_EXP};
+  static inline float_type epsilon() { return DBL_EPSILON; }
+}
+\end{lstlisting}
+
+...and etc. So, when referring to a \cpp{max_exponent} without knowing the type, we have no worries. For example:
+
+\begin{lstlisting}[language=C++]
+template <class numT>
+class matrix {
+  public:
+    typedef numT num_Type;
+    typedef float_traits<num_Type> traits_type;
+
+    inline num_Type epsilon() { return traits_type::epsilon(); }
+};
+\end{lstlisting}
+
+
+\subsubsection{Example 2}
+
+The \cpp{average()} function:
+
+\begin{lstlisting}[language=C++]
+template <class T>
+T average(const T* data, const int n) {
+  T sum = 0;
+  for (int i = 0; i < n; i++) sum += data[i];
+  return sum/n;
+}
+\end{lstlisting}
+
+This works just fine if you want the return type to be the same as the template. But what if you don't?
+
+\begin{lstlisting}[language=C++]
+template <class T>
+struct float_trait { typedef T T_float; }
+
+template <>
+struct float_trait<char> {
+  typedef double T_float;
+};
+
+template <>
+struct float_trait<int> {
+  typedef double T_float;
+};
+
+//etc.
+\end{lstlisting}
+
+So, what you map \underline{from} is the template parameter, and \underline{to} is what you put inside the struct. So then, \cpp{float_trait<T>::T_float} will evaluate to the appropriate float type for that \cpp{T_type}. So, the \cpp{average} function becomes:
+
+\begin{lstlisting}[language=C++]
+template <class T>
+typename float_trait<T>::T_float average(const T* data, const int n) {
+  typename float_trait<T>::T_float sum = 0;
+  for (int i = 0; i < n; i++) sum += data[i];
+  return sum/n;
+}
+\end{lstlisting}
+
+
+\subsubsection{Example 3 (type promotion)}
+
+\begin{lstlisting}[language=C++]
+template <class T1, class T2>
+Vector<???> operator+(Vector<T1>& a, Vector<T2>& b);
+\end{lstlisting}
+
+What will be the type for the return? The solution:
+
+\begin{lstlisting}[language=C++]
+template <class T1, class T2>
+struct promote_trait { };
+
+#define DECLARE_PROMOTE(A, B, C) \
+  template<> struct promote_trait<A, B> \
+  { typedef c T_promote; };
+
+DECLARE_PROMOTE(int, char, int);
+DECLARE_PROMOTE(int, flaot, float);
+//etc.
+\end{lstlisting}
+
+The use:
+
+\begin{lstlisting}[language=C++]
+template <class T1, class T2>
+Vector<typename promote_trait<T1, T2>::T_promote> operator+(Vector<T1>& a, Vector<T2> b);
+\end{lstlisting}

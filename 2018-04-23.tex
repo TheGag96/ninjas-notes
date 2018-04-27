@@ -1,0 +1,53 @@
+\section{2018-04-23}
+
+\subsection{Callbacks}
+
+\subsubsection{Method 1}
+
+\begin{lstlisting}[language=C++]
+double integrate(double a, double b, int numPoints, double (*f)(double)) {
+  double delta = (b-a)/(numPoints-1);
+  double sum = 0;
+
+  for (int i = 0; i < numPoints; i++) {
+    sum += f(a + i*delta);
+  }
+
+  return sum*(b-a)/numPoints;
+}
+
+//...then call like...
+auto thing = interpolate(3, 4, 100, cos);
+\end{lstlisting}
+
+
+\subsubsection{Method 2 (C++ approach)}
+
+\begin{lstlisting}[language=C++]
+class Integrator {
+  public:
+    double integrate(double a, double b, int numPoints) {
+      double delta = (b-a)/(numPoints-1);
+      double sum = 0;
+
+      for (int i = 0; i < numPoints; i++) {
+        sum += func2Integrate(a + i*delta);
+      }
+
+      return sum*(b-a)/numPoints;
+    }
+
+    virtual double func2Integrate(double x) = 0;
+};
+
+class IntegrateMe : public Integrator {
+  public:
+    virtual double func2Integrate(double x) { return cos(x); }
+};
+
+//...then call like...
+auto thing = f.integrate(0, 3.14159, 4500);
+\end{lstlisting}
+
+
+\subsubsection{Method 3}
