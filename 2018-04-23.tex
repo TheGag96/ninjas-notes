@@ -51,3 +51,51 @@ auto thing = f.integrate(0, 3.14159, 4500);
 
 
 \subsubsection{Method 3}
+
+\begin{lstlisting}[language=C++]
+class function1 {
+  public:
+    double operatior()(double x) {
+      return 1.0/(1+x*x);
+    }
+};
+
+template <class T_function>
+double integrate(double a, double b, int numPoints, T_function f) {
+  double delta = (b-a)/(numPoints-1);
+  double sum = 0;
+
+  for (int i = 0; i < numPoints; i++) {
+    sum += f(a + i*delta);
+  }
+
+  return sum*(b-a)/numPoints;
+}
+
+//...then call like...
+auto thing = integrate(1, 2, 10, function1());
+\end{lstlisting}
+
+
+\subsubsection{Method 4 (pointer to function template)}
+
+\begin{lstlisting}[language=C++]
+double function1(double x) {
+  return 1.0/(1+x*x);
+}
+
+template <double T_function(double)>
+double integrate(double a, double b, int numPoints) {
+  double delta = (b-a)/(numPoints-1);
+  double sum = 0;
+
+  for (int i = 0; i < numPoints; i++) {
+    sum += T_function(a + i*delta);
+  }
+
+  return sum*(b-a)/numPoints;
+}
+
+//...then call like...
+auto thing = integrate<function1>(1, 2, 100);
+\end{lstlisting}
